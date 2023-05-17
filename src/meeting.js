@@ -1,4 +1,4 @@
-import { currentZIndex, setCurrentZIndex, history, setHistory, stage, setCanvasElements, canvasElements } from "./whiteboard.js";
+import { currentZIndex, setCurrentZIndex, history, setHistory, stage, setCanvasElements, canvasElements, changeInteractiveTool, receivePdf } from "./whiteboard.js";
 
 let Peer = window.Peer;
 
@@ -54,6 +54,8 @@ peer.on("open", (id) => {
 peer.on("error", (error) => {
     console.error(error);
 });
+
+
 
 // Handle incoming voice/video connection
 peer.on("call", (call) => {
@@ -171,41 +173,10 @@ let connectToPeer = () => {
 
                 stage.addChild(sprite);
             }else if(tempPenType == -1){
-                let temp_pdf = splittedMessage[1];
+                changeInteractiveTool(1);
 
-                const arr = temp_pdf.split(",").map(Number);
-                const uint8arr = new Uint8Array(arr);
+                receivePdf(splittedMessage[1]);
 
-                console.log(uint8arr);
-                
-
-                pdfjsLib.getDocument(uint8arr).promise.then(function(pdf) {
-                    var pages = Array.from(Array(pdf.numPages).keys());
-                    return Promise.all(pages.map(function(num) {
-                    return pdf.getPage(num + 1);
-                    }));
-                }).then(function(pages) {
-                    
-                    var iframe = document.getElementById('pdf-iframe');
-                    setCanvasElements(pages.map(function(page) {
-                        var canvas = document.createElement('canvas');
-                        console.log(iframe);
-                        var scale = Math.min(iframe.clientWidth / page.getViewport({scale: 1}).width, iframe.clientHeight / page.getViewport({scale: 1}).height);
-                        var viewport = page.getViewport({scale: scale * 1.3});
-                        canvas.width = viewport.width;
-                        canvas.height = viewport.height;
-                        page.render({canvasContext: canvas.getContext('2d'), viewport: viewport}).promise.then(function() {});
-                        return canvas;
-                    }));
-                    
-                    var doc = iframe.contentWindow.document;
-                    doc.open();
-                    doc.write("<html><body></body></html>");
-                    canvasElements.forEach(function(canvas) {
-                    doc.body.appendChild(canvas);
-                    });
-                    doc.close();
-                });
             }
 
             
@@ -242,21 +213,28 @@ if (connectToPeerId){
     connectToPeer();
 }
 
-// Close the connection for both peers
-let disconnectFromPeer = () => {
-    logMessage("Disconnecting from peer");
-    currentCall.close();
-    peer.disconnect();
-
-    if (screenStream) {
-        screenStream.getTracks().forEach((track) => track.stop());
-        screenStream = null;
-    }
-};
+let shareScreen = () => {
+    navigator.mediaDevices
+      .getDisplayMedia({ video: true })
+      .then((screenStream) => {
+        const videoTrack = screenStream.getVideoTracks()[0];
+        const sender = currentCall.peerConnection.getSenders().find((s) => s.track.kind === videoTrack.kind);
+        sender.replaceTrack(videoTrack);
   
-
-window.connectToPeer = connectToPeer;
-window.disconnectFromPeer = disconnectFromPeer;
+        // Create a new video element for the shared screen
+        const sharedScreenVideo = document.createElement("video");
+        sharedScreenVideo.srcObject = screenStream;
+        sharedScreenVideo.autoplay = true;
+        sharedScreenVideo.classList.add("shared-screen");
+  
+        // Append the shared screen video element to the HTML body
+        document.body.appendChild(sharedScreenVideo);
+      })
+      .catch((error) => {
+        console.error("Error sharing screen:", error);
+      });
+  };
+  
 
 // Handle incoming data connection
 peer.on("connection", (conn) => {
@@ -349,41 +327,9 @@ peer.on("connection", (conn) => {
 
                 stage.addChild(sprite);
             }else if(tempPenType == -1){
-                let temp_pdf = splittedMessage[1];
+                changeInteractiveTool(1);
 
-                const arr = temp_pdf.split(",").map(Number);
-                const uint8arr = new Uint8Array(arr);
-
-                console.log(uint8arr);
-                
-
-                pdfjsLib.getDocument(uint8arr).promise.then(function(pdf) {
-                    var pages = Array.from(Array(pdf.numPages).keys());
-                    return Promise.all(pages.map(function(num) {
-                    return pdf.getPage(num + 1);
-                    }));
-                }).then(function(pages) {
-                    
-                    var iframe = document.getElementById('pdf-iframe');
-                    canvasElements = pages.map(function(page) {
-                        var canvas = document.createElement('canvas');
-                        console.log(iframe);
-                        var scale = Math.min(iframe.clientWidth / page.getViewport({scale: 1}).width, iframe.clientHeight / page.getViewport({scale: 1}).height);
-                        var viewport = page.getViewport({scale: scale * 1.3});
-                        canvas.width = viewport.width;
-                        canvas.height = viewport.height;
-                        page.render({canvasContext: canvas.getContext('2d'), viewport: viewport}).promise.then(function() {});
-                        return canvas;
-                    });
-                    
-                    var doc = iframe.contentWindow.document;
-                    doc.open();
-                    doc.write("<html><body></body></html>");
-                    canvasElements.forEach(function(canvas) {
-                    doc.body.appendChild(canvas);
-                    });
-                    doc.close();
-                });
+                receivePdf(splittedMessage[1]);
             }
 
         }
@@ -391,4 +337,21 @@ peer.on("connection", (conn) => {
     conn.on("open", () => {
         conn.send("hello!");
     });
+
 });
+
+// Close the connection for both peers
+let disconnectFromPeer = () => {
+    logMessage("Disconnecting from peer");
+    currentCall.close();
+    peer.disconnect();
+
+    if (screenStream) {
+        screenStream.getTracks().forEach((track) => track.stop());
+        screenStream = null;
+    }
+};
+  
+
+window.connectToPeer = connectToPeer;
+window.disconnectFromPeer = disconnectFromPeer;
