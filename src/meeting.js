@@ -35,7 +35,8 @@ let renderVideo = (stream) => {
 };
 
 // Register with the peer server
-export let peer = myPeerId? new Peer(myPeerId,{
+console.log(myPeerId);
+export let peer = myPeerId!=null? new Peer(myPeerId,{
     host: "/",
     path: "/peerjs/myapp",
 }):new Peer({
