@@ -30,11 +30,11 @@
         <input type="text" id="connect-to-peer" placeholder="Enter Peer ID" ></input>
       </li>
       <li>
-        <button onclick="connectToPeer()">
+        <button id="connectButton">
           Connect
         </button></li>
       <li>
-        <button onclick="disconnectFromPeer()">
+        <button id="disconnectButton" disabled>
           Disconnect
         </button></li>
       <li>
@@ -57,7 +57,7 @@
     </div>
     <div id="main-container">
       <div id="video-container">
-        <video class="remote-video" autoplay></video>
+        <video id="remote-video" autoplay></video>
     </div>
     <div id="interactives">
       <div id="interactive-0" class="white-board">

@@ -1,4 +1,4 @@
-import { peer, otherPeer  } from './meeting.js';
+import { peer, conn  } from './meeting.js';
 
 //const fmin = require('./fmin');
 
@@ -94,7 +94,7 @@ textSizeInput.addEventListener("input", () => {
         p_text.x +
         "|" +
         p_text.y;
-    otherPeer.send(
+    conn.send(
         mess
     );
     history += mess + "\n";
@@ -127,7 +127,7 @@ textColorSelect.addEventListener("change", () => {
             "|" +
             p_text.y;
 
-        otherPeer.send(
+        conn.send(
             mess
         );
 
@@ -515,7 +515,7 @@ const onMouseMove = (e) => {
                         pen_size +
                         "|" +
                         pen_color;
-                    otherPeer.send(
+                    conn.send(
                         mess
                     );
                     history += mess + "\n";
@@ -542,7 +542,7 @@ const onMouseMove = (e) => {
                         "|" +
                         eraser_size;
 
-                    otherPeer.send(
+                    conn.send(
                         mess
                     );
 
@@ -616,7 +616,7 @@ const onMouseDown = (e) => {
             p_text.x +
             "|" +
             p_text.y;
-        otherPeer.send(
+        conn.send(
             mess
         );
         history += mess + "\n";
@@ -642,7 +642,7 @@ const onMouseDown = (e) => {
                 p_text.x +
                 "|" +
                 p_text.y;
-            otherPeer.send(
+            conn.send(
                 mess
             );
             history += mess + "\n";
@@ -696,7 +696,7 @@ const onMouseDown = (e) => {
                 "|" +
                 relativePos.y;
 
-            otherPeer.send(
+            conn.send(
                 mess
             );
 
@@ -768,7 +768,7 @@ const onMouseUp = (e) => {
                 pen_size +
                 "|" +
                 pen_color;
-            otherPeer.send(
+            conn.send(
                 mess
             );
             history += mess + "\n";
@@ -795,7 +795,7 @@ const onMouseUp = (e) => {
                 "|" +
                 eraser_size;
 
-            otherPeer.send(
+            conn.send(
                 mess
             );
 
@@ -833,7 +833,7 @@ document.addEventListener("keydown", (event) => {
                 p_text.x +
                 "|" +
                 p_text.y;
-            otherPeer.send(
+            conn.send(
                 mess
             );
 
@@ -934,7 +934,7 @@ document.getElementById('pdf-input').addEventListener('change', function(event) 
         console.log(this.result);
 
       var typedarray = new Uint8Array(this.result);
-      otherPeer.send(
+      conn.send(
         "-1" +
         "|" +
         typedarray
@@ -1014,7 +1014,7 @@ function initPDFRenderer(event) {
 
         var typedarray = new Uint8Array(reader.result);
 
-        otherPeer.send(
+        conn.send(
             "-1" +
             "|" +
             typedarray);
@@ -1096,7 +1096,7 @@ function renderNextPage(ev) {
     const mess = "-2" +
        "|" +
        currentPageNum;
-    otherPeer.send(
+    conn.send(
         mess
     );
 
@@ -1113,7 +1113,7 @@ function renderPreviousPage(ev) {
     const mess = "-2" +
        "|" +
        currentPageNum;
-    otherPeer.send(
+    conn.send(
         mess
     );
 
@@ -1128,7 +1128,7 @@ function goToPageNum(ev) {
     const mess = "-2" +
        "|" +
        pageNumber;
-    otherPeer.send(
+    conn.send(
         mess
     );
 
