@@ -51,11 +51,6 @@ let connectionInitiated = false;
 peer.on("open", (id) => {
     logMessage("My peer ID is: " + id);
 });
-peer.on("error", (error) => {
-    console.error(error);
-});
-
-
 
 // Handle incoming voice/video connection
 peer.on("call", (call) => {
@@ -88,7 +83,7 @@ let connectToPeer = () => {
 
     peer.on("error", (error) => {
         // Connection error occurred
-        console.error("Could not connect to peer", peerId, ":", error);
+        console.error("Could not connect to peer", peerId);
     
         // Check if the connection failed due to a specific error message
         if (error.type === "peer-unavailable") {
