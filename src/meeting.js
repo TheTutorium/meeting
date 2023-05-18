@@ -209,33 +209,6 @@ let connectToPeer = () => {
         });
 };
 
-if (connectToPeerId){
-    connectToPeer();
-}
-
-let shareScreen = () => {
-    navigator.mediaDevices
-      .getDisplayMedia({ video: true })
-      .then((screenStream) => {
-        const videoTrack = screenStream.getVideoTracks()[0];
-        const sender = currentCall.peerConnection.getSenders().find((s) => s.track.kind === videoTrack.kind);
-        sender.replaceTrack(videoTrack);
-  
-        // Create a new video element for the shared screen
-        const sharedScreenVideo = document.createElement("video");
-        sharedScreenVideo.srcObject = screenStream;
-        sharedScreenVideo.autoplay = true;
-        sharedScreenVideo.classList.add("shared-screen");
-  
-        // Append the shared screen video element to the HTML body
-        document.body.appendChild(sharedScreenVideo);
-      })
-      .catch((error) => {
-        console.error("Error sharing screen:", error);
-      });
-  };
-  
-
 // Handle incoming data connection
 peer.on("connection", (conn) => {
     otherPeer = conn;
@@ -355,3 +328,7 @@ let disconnectFromPeer = () => {
 
 window.connectToPeer = connectToPeer;
 window.disconnectFromPeer = disconnectFromPeer;
+
+if (connectToPeerId){
+    connectToPeer();
+}
