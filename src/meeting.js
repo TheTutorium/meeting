@@ -83,6 +83,7 @@ let connectToPeer = () => {
 
     peer.on("error", (error) => {
         // Connection error occurred
+        conn.close();
         console.error("Could not connect to peer", peerId);
     
         // Check if the connection failed due to a specific error message
