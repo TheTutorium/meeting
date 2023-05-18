@@ -34,6 +34,12 @@ app.use(function (req, res, next) {
     next();
 });
 
+app.use((err, req, res, next) => {
+    
+    console.error(err);
+    next();
+  });
+
 // listen for requests
 const server = app.listen(PORT, () => {
     console.log("Your app is listening on port " + server.address().port);
