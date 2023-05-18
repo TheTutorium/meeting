@@ -1,4 +1,4 @@
-import { currentZIndex, setCurrentZIndex, history, setHistory, stage, setCanvasElements, canvasElements, changeInteractiveTool, receivePdf } from "./whiteboard.js";
+import { currentZIndex, setCurrentZIndex, history, setHistory, stage, setCanvasElements, canvasElements, changeInteractiveTool, receivePdf, goToPageHelper } from "./whiteboard.js";
 
 let Peer = window.Peer;
 
@@ -39,9 +39,11 @@ console.log(myPeerId);
 export let peer = myPeerId!=null? new Peer(myPeerId,{
     host: "/",
     path: "/peerjs/myapp",
+    port: 3000,
 }):new Peer({
     host: "/",
     path: "/peerjs/myapp",
+    port: 3000
 });
 
 export let otherPeer = null;
@@ -190,10 +192,11 @@ let connectToPeer = () => {
 
                 receivePdf(splittedMessage[1]);
 
+            }else if(tempPenType == -2){
+                //While not looking pdf rendering does not work correctly
+                goToPageHelper(parseInt(splittedMessage[1]));
             }
 
-            
-        
         }
     });
 
@@ -316,6 +319,9 @@ peer.on("connection", (conn) => {
                 changeInteractiveTool(1);
 
                 receivePdf(splittedMessage[1]);
+            }else if(tempPenType == -2){
+                //While not looking pdf rendering does not work correctly
+                goToPageHelper(parseInt(splittedMessage[1]));
             }
 
         }

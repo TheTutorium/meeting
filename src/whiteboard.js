@@ -1085,11 +1085,21 @@ function renderPageQueue(pageNum) {
 }
 
 function renderNextPage(ev) {
+    
     if(currentPageNum >= totalPages) {
         alert("This is the last page");
         return ;
     } 
     currentPageNum++;
+
+    //Send Page info
+    const mess = "-2" +
+       "|" +
+       currentPageNum;
+    otherPeer.send(
+        mess
+    );
+
     renderPageQueue(currentPageNum);
 }
 function renderPreviousPage(ev) {
@@ -1098,12 +1108,35 @@ function renderPreviousPage(ev) {
         return ;
     }
     currentPageNum--;
+
+        //Send Page info
+    const mess = "-2" +
+       "|" +
+       currentPageNum;
+    otherPeer.send(
+        mess
+    );
+
     renderPageQueue(currentPageNum);
 }
 
 function goToPageNum(ev) {
     let numberInput = document.getElementById('page_num');
     let pageNumber = parseInt(numberInput.value);
+
+    //Send Page info
+    const mess = "-2" +
+       "|" +
+       pageNumber;
+    otherPeer.send(
+        mess
+    );
+
+    goToPageHelper(pageNumber);
+}
+
+export function goToPageHelper(pageNumber){
+    let numberInput = document.getElementById('page_num');
     if(pageNumber) {
         if(pageNumber <= totalPages && pageNumber >= 1){
             currentPageNum = pageNumber;
