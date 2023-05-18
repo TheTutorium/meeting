@@ -86,6 +86,23 @@ let connectToPeer = () => {
     let conn = peer.connect(peerId);
     otherPeer = conn;
 
+    peer.on("error", (error) => {
+        // Connection error occurred
+        console.error("Could not connect to peer", peerId, ":", error);
+    
+        // Check if the connection failed due to a specific error message
+        if (error.type === "peer-unavailable") {
+          // Retry connection after the specified interval
+          console.log("Retrying connection to", peerId);
+          setTimeout(() => {
+            connectToPeer();
+          }, 5000);
+        } else {
+          // Handle other connection errors
+          console.error("Connection error:", error);
+        }
+      });
+
     conn.on("data", (data) => {
         if (!connectionInitiated) {
             connectionInitiated = true;
@@ -329,6 +346,6 @@ let disconnectFromPeer = () => {
 window.connectToPeer = connectToPeer;
 window.disconnectFromPeer = disconnectFromPeer;
 
-if (connectToPeerId){
+if (connectToPeerId && myPeerId < connectToPeerId){
     connectToPeer();
 }
