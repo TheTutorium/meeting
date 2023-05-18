@@ -281,8 +281,7 @@ checkPath();
 if (connectToPeerId && myPeerId) {
   peer = new Peer(myPeerId, {
     host: "/",
-    path: "/peerjs/myapp",
-    port: 3000
+    path: "/peerjs/myapp"
   });
 
   if (myPeerId < connectToPeerId) {
@@ -293,8 +292,7 @@ if (connectToPeerId && myPeerId) {
 else {
   peer = new Peer({
     host: "/",
-    path: "/peerjs/myapp",
-    port: 3000
+    path: "/peerjs/myapp"
   });
 }
 
