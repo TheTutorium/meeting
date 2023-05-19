@@ -1161,3 +1161,15 @@ const shotImage = () => {
 }
 
 document.shotImage = shotImage;
+
+//Reset Whiteboard
+const resetWhiteboard = () => {
+    stage.removeChildren();
+    const mess = "-3" +
+        "|" +
+        "0";
+    conn.send(mess);
+}
+
+document.resetWhiteboard = resetWhiteboard;
+
