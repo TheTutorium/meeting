@@ -71,12 +71,7 @@ function sendTextToConn(){
 
 var last_mouse_button = 0;
 
-// listen for changes to the pen size input
-penSizeInput.addEventListener("input", () => {
-  // get the new pen size value
-  pen_size = parseInt(penSizeInput.value);
-  
-});
+
 
 $('#tool-button-0').dropdown({
     onChange: function(value, text, $selectedItem) {
@@ -326,7 +321,7 @@ const changePenType = (type) => {
     if(writing_on_board){
         sendTextToConn();
     }
-    
+
     writing_on_board = false;
 
     console.log(currentPenType);
