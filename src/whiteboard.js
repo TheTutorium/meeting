@@ -45,6 +45,11 @@ var p_text = new PIXI.Text("Hello, world!", textStyle);
 function sendTextToConn(){
     interactibleObjects.push(p_text);
     console.log(p_text);
+
+    if(cursor_added){
+        removeCursor();
+    }
+
     const mess = "2" +
         "|" +
         currentZIndex +
@@ -1078,8 +1083,14 @@ document.addEventListener("keydown", (event) => {
             writing_on_board = false;
         }
         else if(alphanumericKey && event.key.length === 1){
+            if(cursor_added){
+                removeCursor();
+            }
             p_text.text += event.key;
         }else if(event.key.localeCompare(" ") === 0){
+            if(cursor_added){
+                removeCursor();
+            }
             p_text.text += " ";
         }
     }
@@ -1371,3 +1382,45 @@ function SelectCheck(mouseX, mouseY, leftUpX, leftUpY, rightDownX, rightDownY){
     }
     return false;
 }
+
+let cursor_added = false;
+
+// Add '|' character at the end of text
+function addCursor() {
+    cursor_added = true;
+    p_text.text += "|";
+  }
+  
+  // Remove '|' character from text
+  function removeCursor() {
+    cursor_added = false;
+    p_text.text = p_text.text.slice(0, -1);
+  }
+
+let curTime = 0;
+const CURSOR_TICK_TIME = 250;
+
+
+// Use PIXI's ticker to update the text every frame
+app.ticker.add(() => {
+    curTime += PIXI.Ticker.shared.elapsedMS;
+    if(curTime < CURSOR_TICK_TIME){
+        return;
+    }
+    curTime -= CURSOR_TICK_TIME;
+    
+    if (writing_on_board || cursor_added) {
+      if (!cursor_added) {
+        
+        // Add '|' character
+        addCursor();
+  
+      }
+      else{
+        
+        // Add '|' character
+        removeCursor();
+
+      }
+    }
+  });
