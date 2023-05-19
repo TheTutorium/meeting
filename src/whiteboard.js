@@ -9,6 +9,12 @@ export function setHistory(newValue) {
     history = newValue;
 }
 
+let hoverBorder = null;
+
+export let interactibleObjects = [];
+
+const selectCheck = {upperLeft: false, upperRight: false, lowerRight: false, lowerLeft: false, up: false, right: false, down: false, left: false, on: false};
+
 const maxPointForBezierCurve = 50;
 
 const CHECK_STEPS = 5;
@@ -24,6 +30,8 @@ var text_color = "0x000000";
 
 var writing_on_board = false;
 
+let selectedObject = null;
+
 export var canvasElements;
 
 var textStyle = new PIXI.TextStyle({
@@ -33,6 +41,28 @@ var textStyle = new PIXI.TextStyle({
 });
 
 var p_text = new PIXI.Text("Hello, world!", textStyle);
+
+function sendTextToConn(){
+    interactibleObjects.push(p_text);
+    console.log(p_text);
+    const mess = "2" +
+        "|" +
+        currentZIndex +
+        "|" +
+        text_size +
+        "|" +
+        text_color +
+        "|" +
+        p_text.text +
+        "|" +
+        p_text.x +
+        "|" +
+        p_text.y;
+    conn.send(
+        mess
+    );
+    history += mess + "\n";
+}
 
 var last_mouse_button = 0;
 
@@ -81,23 +111,7 @@ textSizeInput.addEventListener("input", () => {
   sampleTextPointer.style.fontSize = fontSize;
 
   if(writing_on_board){
-    const mess = currentPenType +
-        "|" +
-        currentZIndex +
-        "|" +
-        text_size +
-        "|" +
-        text_color +
-        "|" +
-        p_text.text +
-        "|" +
-        p_text.x +
-        "|" +
-        p_text.y;
-    conn.send(
-        mess
-    );
-    history += mess + "\n";
+    sendTextToConn();
     writing_on_board = false;
   }
 
@@ -111,27 +125,9 @@ textColorSelect.addEventListener("change", () => {
     
     // update the color of the "Sample Text" element
     sampleTextPointer.style.color = fontColor;
-
+    
     if(writing_on_board){
-        const mess = currentPenType +
-            "|" +
-            currentZIndex +
-            "|" +
-            text_size +
-            "|" +
-            text_color +
-            "|" +
-            p_text.text +
-            "|" +
-            p_text.x +
-            "|" +
-            p_text.y;
-
-        conn.send(
-            mess
-        );
-
-        history += mess + "\n";
+        sendTextToConn();
 
         writing_on_board = false;
       }
@@ -183,6 +179,13 @@ function transformPoint(x,y){
     return {x: newX, y: newY};
 }
 
+function reverseTransformPoint(x, y) {
+    var newX = x * canvas_scale - canvas_translation.x;
+    var newY = y * canvas_scale - canvas_translation.y;
+  
+    return { x: newX, y: newY };
+}
+
 const fileInput = document.getElementById('file-input');
 
 var have_file = false;
@@ -210,11 +213,11 @@ function onCanvasScroll(event) {
     const delta = Math.sign(event.deltaY) * SCALE_CONST;
 
     // Do something with the scroll direction
-    console.log(app.view.width);
+    //console.log(app.view.width);
 
     var middlePoint = transformPoint(app.view.width / 2, app.view.height / 2);
-    console.log(stage.position);
-    console.log(canvas_scale);
+    //console.log(stage.position);
+    //console.log(canvas_scale);
 
     const prev_scale = canvas_scale;
 
@@ -285,6 +288,9 @@ export const changeInteractiveTool = (tool) => {
     const currButton = document.querySelector(`#interactive-button-${tool}`);
     currButton.classList.add('selected-interactive-button');
 
+    if(writing_on_board){
+        sendTextToConn();
+    }
     writing_on_board = false;
 
 };
@@ -345,6 +351,9 @@ const changePenType = (type) => {
     const currButton = document.querySelector(`#tool-button-${type}`);
     currButton.classList.add('selected-button');
 
+    if(writing_on_board){
+        sendTextToConn();
+    }
     writing_on_board = false;
 
     console.log(currentPenType);
@@ -373,7 +382,172 @@ export function setCanvasElements(newValue) {
     canvasElements = newValue;
 }
 
+const HOVER_RANGE = 10;
+
+function checkCorner(mousePos, corner){
+    const t_corner = reverseTransformPoint(corner.x, corner.y);
+    if(Math.abs(mousePos.x - t_corner.x) <= HOVER_RANGE &&  Math.abs(mousePos.y - t_corner.y) <= HOVER_RANGE){
+        return true;
+    }
+    return false;
+}
+
+function isBetween(number, bound1, bound2) {
+    var lowerBound = Math.min(bound1, bound2);
+    var upperBound = Math.max(bound1, bound2);
+    return number > lowerBound && number < upperBound;
+}
+
+function checkEdge(mousePos, corner1, corner2){
+    const t_corner1 = reverseTransformPoint(corner1.x, corner1.y);
+    const t_corner2 = reverseTransformPoint(corner2.x, corner2.y);
+    if(t_corner1.x == t_corner2.x){
+        if(Math.abs(t_corner1.x - mousePos.x) <= HOVER_RANGE){
+            return isBetween(mousePos.y, t_corner1.y, t_corner2.y);
+        }else{
+            return false;
+        }
+    }else if(t_corner1.y == t_corner2.y){
+        if(Math.abs(t_corner1.y - mousePos.y) <= HOVER_RANGE){
+            return isBetween(mousePos.x, t_corner1.x, t_corner2.x);
+        }else{
+            return false;
+        }
+    }else{
+        return false;
+    }
+}
+
+function transformSprite( curMousePosRef){
+    console.log(selectedObject);
+    console.log(hoverBorder);
+    let t_mousePos = transformPoint(curMousePosRef.x, curMousePosRef.y);
+    let t_initPos = transformPoint(hover_init_pointer.x, hover_init_pointer.y);
+    switch(current_hover){
+        case 0:
+            if(selectedObject.width + t_initPos.x - t_mousePos.x > 0){
+                selectedObject.position.x = t_mousePos.x;
+                selectedObject.width += t_initPos.x - t_mousePos.x;
+                hoverBorder.position.x = selectedObject.position.x;
+                hoverBorder.width = selectedObject.width;
+                hover_init_pointer.x = curMousePosRef.x;
+            }
+            if(selectedObject.height + t_initPos.y - t_mousePos.y > 0){
+                selectedObject.position.y = t_mousePos.y;
+                selectedObject.height += t_initPos.y - t_mousePos.y;
+                hoverBorder.position.y = selectedObject.position.y;
+                hoverBorder.height = selectedObject.height;
+                hover_init_pointer.y = curMousePosRef.y;
+            }
+            break;
+        case 1:
+            if(t_initPos.x - t_mousePos.x < selectedObject.width){
+                selectedObject.width -= t_initPos.x - t_mousePos.x;
+                hoverBorder.width = selectedObject.width;
+                hover_init_pointer.x = curMousePosRef.x;
+            }
+            if(selectedObject.height + t_initPos.y - t_mousePos.y > 0){
+                selectedObject.position.y = t_mousePos.y;
+                selectedObject.height += t_initPos.y - t_mousePos.y;
+                hoverBorder.position.y = selectedObject.position.y;
+                hoverBorder.height = selectedObject.height;
+                hover_init_pointer.y = curMousePosRef.y;
+            }
+            break;
+        case 2:
+            if(t_initPos.x - t_mousePos.x < selectedObject.width){
+                selectedObject.width -= t_initPos.x - t_mousePos.x;
+                hoverBorder.width = selectedObject.width;
+                hover_init_pointer.x = curMousePosRef.x;
+            }
+            if( t_initPos.y - t_mousePos.y < selectedObject.height){
+                selectedObject.height -= t_initPos.y - t_mousePos.y;
+                hoverBorder.height = selectedObject.height;
+                hover_init_pointer.y = curMousePosRef.y;
+            }
+            break;
+        case 3:
+            if(selectedObject.width + t_initPos.x - t_mousePos.x > 0){
+                selectedObject.position.x = t_mousePos.x;
+                selectedObject.width += t_initPos.x - t_mousePos.x;
+                hoverBorder.position.x = selectedObject.position.x;
+                hoverBorder.width = selectedObject.width;
+                hover_init_pointer.x = curMousePosRef.x;
+            }
+            if( t_initPos.y - t_mousePos.y < selectedObject.height){
+                selectedObject.height -= t_initPos.y - t_mousePos.y;
+                hoverBorder.height = selectedObject.height;
+                hover_init_pointer.y = curMousePosRef.y;
+            }
+            break;
+        case 4:
+            if(selectedObject.height + t_initPos.y - t_mousePos.y > 0){
+                selectedObject.position.y = t_mousePos.y;
+                selectedObject.height += t_initPos.y - t_mousePos.y;
+                hoverBorder.position.y = selectedObject.position.y;
+                hoverBorder.height = selectedObject.height;
+                hover_init_pointer.y = curMousePosRef.y;
+            }
+            break;
+        case 5:
+            if(t_initPos.x - t_mousePos.x < selectedObject.width){
+                selectedObject.width -= t_initPos.x - t_mousePos.x;
+                hoverBorder.width = selectedObject.width;
+                hover_init_pointer.x = curMousePosRef.x;
+            }
+            break;
+        case 6:
+            if( t_initPos.y - t_mousePos.y < selectedObject.height){
+                selectedObject.height -= t_initPos.y - t_mousePos.y;
+                hoverBorder.height = selectedObject.height;
+                hover_init_pointer.y = curMousePosRef.y;
+            }
+            break;
+        case 7:
+            if(selectedObject.width + t_initPos.x - t_mousePos.x > 0){
+                selectedObject.position.x = t_mousePos.x;
+                selectedObject.width += t_initPos.x - t_mousePos.x;
+                hoverBorder.position.x = selectedObject.position.x;
+                hoverBorder.width = selectedObject.width;
+                hover_init_pointer.x = curMousePosRef.x;
+            }
+            break;
+        case 8:
+            selectedObject.position.x += t_mousePos.x - t_initPos.x;
+            selectedObject.position.y += t_mousePos.y - t_initPos.y;
+            hoverBorder.position.x = selectedObject.position.x;
+            hoverBorder.position.y = selectedObject.position.y;
+            hover_init_pointer = curMousePosRef;
+            break;
+        default:
+    }
+}
+
 const onMouseMove = (e) => {
+    const curMousePosRef = getMousePos(e);
+
+    if(currentPenType == 4 && selectedObject && last_mouse_button == 0){
+        if(isMouseButtonDown){
+            transformSprite(curMousePosRef);
+        }else{
+            let temp_mouse = transformPoint(curMousePosRef.x, curMousePosRef.y);
+            let temp_corners = [{x:selectedObject.position.x, y:selectedObject.position.y}, {x:selectedObject.position.x + selectedObject.width, y:selectedObject.position.y}, {x:selectedObject.position.x + selectedObject.width, y:selectedObject.position.y + selectedObject.height}, {x:selectedObject.position.x, y:selectedObject.position.y + selectedObject.height}]
+            selectCheck.upperLeft = checkCorner(curMousePosRef, temp_corners[0]);
+            selectCheck.upperRight = checkCorner(curMousePosRef, temp_corners[1]);
+            selectCheck.lowerRight = checkCorner(curMousePosRef, temp_corners[2]);
+            selectCheck.lowerLeft = checkCorner(curMousePosRef, temp_corners[3]);
+            selectCheck.up = checkEdge(curMousePosRef, temp_corners[0], temp_corners[1]);
+            selectCheck.right = checkEdge(curMousePosRef, temp_corners[1], temp_corners[2]);
+            selectCheck.down = checkEdge(curMousePosRef, temp_corners[2], temp_corners[3]);
+            selectCheck.left = checkEdge(curMousePosRef, temp_corners[3], temp_corners[0]);
+            selectCheck.on = SelectCheck(temp_mouse.x, temp_mouse.y, temp_corners[0].x, temp_corners[0].y, temp_corners[2].x, temp_corners[2].y);
+        }
+
+
+        initPointer = curMousePosRef;
+        return;
+    }
+
     if (!isMouseButtonDown) {
         return;
     }
@@ -381,7 +555,7 @@ const onMouseMove = (e) => {
     // clearSpriteRef(annoRef)
     if (initPointer == null) return;
 
-    const curMousePosRef = getMousePos(e);
+    
     curDistance = Math.sqrt((curMousePosRef.x - mousePosRef.x) * (curMousePosRef.x - mousePosRef.x) + (curMousePosRef.y - mousePosRef.y) * (curMousePosRef.y - mousePosRef.y));
 
     /*if(last_mouse_button == 1){
@@ -408,13 +582,17 @@ const onMouseMove = (e) => {
         stage.position.set(stage.position.x + translationOffset.x, stage.position.y + translationOffset.y);
 
 
-        console.log(canvas_translation);
+        //console.log(canvas_translation);
         canvas_translation.x = -stage.position.x;
         canvas_translation.y = -stage.position.y;
 
         initPointer = curMousePosRef;
 
         return;
+    }
+
+    if(currentPenType == 4){
+
     }
 
 
@@ -578,7 +756,7 @@ const onMouseMove = (e) => {
 
 container.oncontextmenu = function(e) { e.preventDefault(); e.stopPropagation(); }
 
-
+let current_selected_object_index = 0;
 
 const onMouseDown = (e) => {
     mousePosRef = getMousePos(e);
@@ -601,25 +779,10 @@ const onMouseDown = (e) => {
 
     last_mouse_button = 0;
 
+    //console.log(currentPenType + " " + writing_on_board);
     if(currentPenType != 2 && writing_on_board){
         writing_on_board = false;
-        const mess = currentPenType +
-            "|" +
-            currentZIndex +
-            "|" +
-            text_size +
-            "|" +
-            text_color +
-            "|" +
-            p_text.text +
-            "|" +
-            p_text.x +
-            "|" +
-            p_text.y;
-        conn.send(
-            mess
-        );
-        history += mess + "\n";
+        sendTextToConn();
     }
 
     sprite = new PIXI.Graphics();
@@ -629,23 +792,7 @@ const onMouseDown = (e) => {
         sprite.lineStyle(eraser_size, 0xffffff, 1);
     } else if (currentPenType === 2){ // Typing
         if(writing_on_board == true){
-            const mess = currentPenType +
-                "|" +
-                currentZIndex +
-                "|" +
-                text_size +
-                "|" +
-                text_color +
-                "|" +
-                p_text.text +
-                "|" +
-                p_text.x +
-                "|" +
-                p_text.y;
-            conn.send(
-                mess
-            );
-            history += mess + "\n";
+            sendTextToConn();
         }
         console.log("Typing");
         const mouseX = e.clientX - app.renderer.view.offsetLeft;
@@ -678,6 +825,9 @@ const onMouseDown = (e) => {
     
             const sprite = new PIXI.Sprite(image_texture);
 
+            interactibleObjects.push(sprite);
+            console.log(interactibleObjects);
+
             const relativePos = transformPoint(mousePosRef.x, mousePosRef.y);
 
             sprite.x = relativePos.x;
@@ -704,6 +854,53 @@ const onMouseDown = (e) => {
 
 
         }
+    } else if(currentPenType == 4){ //Select Tool
+        if(hoverSelectedObject()){
+            hover_init_pointer = mousePosRef;
+            //console.log(current_hover);
+            return;
+        }
+        console.log("hiiii");
+
+        hover_init_pointer = mousePosRef;
+
+        let space_map = transformPoint(mousePosRef.x, mousePosRef.y);
+        stage.removeChild(hoverBorder);
+        hoverBorder = null;
+        selectedObject = null;
+        current_selected_object_index = -1;
+
+        for(let i = interactibleObjects.length - 1; i >= 0; i--){
+            if(SelectCheck(space_map.x, space_map.y, interactibleObjects[i].position.x, interactibleObjects[i].position.y, interactibleObjects[i].position.x + interactibleObjects[i].width, interactibleObjects[i].position.y + interactibleObjects[i].height)){
+                selectedObject = interactibleObjects[i];
+                current_selected_object_index = i;
+                i = -1;
+            }
+        }
+
+        if(selectedObject){
+            console.log("returned");
+
+            // Create a Graphics object
+            hoverBorder = new PIXI.Graphics();
+
+            // Set the line style and fill color for the rectangle
+            hoverBorder.lineStyle(1, 0x0000FF); // Set line style with a thickness of 2 and color black
+            //graphics.beginFill(0x000000); // Set fill color to red
+
+            // Draw the rectangle
+            hoverBorder.drawRect(0, 0, selectedObject.width, selectedObject.height); // Draw a rectangle at (50, 50) with width 200 and height 100
+            hoverBorder.position.x = selectedObject.position.x;
+            hoverBorder.position.y = selectedObject.position.y;
+
+            // End the fill and line styles
+            //graphics.endFill();
+
+            // Add the graphics object to the stage
+            stage.addChild(hoverBorder);
+            //selectedObject.tint = 0xff0000;
+        }
+        
     }
     //sprite.moveTo(initPointer.x, initPointer.y);
     //sprite.lineTo(mousePosRef.x, mousePosRef.y);
@@ -715,9 +912,66 @@ const onMouseDown = (e) => {
     //console.log(mousePosRef);
 };
 
+let hover_init_pointer = null;
+
+let current_hover = -1; 
+
+function hoverSelectedObject(){
+    //console.log(selectCheck);
+    if(selectCheck.upperLeft){
+        current_hover = 0;
+        return true;
+    }else if(selectCheck.upperRight){
+        current_hover = 1;
+        return true;
+    }else if(selectCheck.lowerRight){
+        current_hover = 2;
+        return true;
+    }else if(selectCheck.lowerLeft){
+        current_hover = 3;
+        return true;
+    }else if(selectCheck.up){
+        current_hover = 4;
+        return true;
+    }else if(selectCheck.right){
+        current_hover = 5;
+        return true;
+    }else if(selectCheck.down){
+        current_hover = 6;
+        return true;
+    }else if(selectCheck.left){
+        current_hover = 7;
+        return true;
+    }else if(selectCheck.on){
+        current_hover = 8;
+        return true;
+    }
+
+    current_hover = -1;
+    return false;
+}
+
 
 const onMouseUp = (e) => {
     isMouseButtonDown = false;
+
+    if(currentPenType == 4 && current_hover >= 0){
+        const mess = currentPenType +
+                "|" +
+                current_selected_object_index + // Object Number
+                "|" +
+                selectedObject.position.x + // x
+                "|" +
+                selectedObject.position.y + // y
+                "|" +
+                selectedObject.width + // width
+                "|" +
+                selectedObject.height;// height
+            conn.send(
+                mess
+            );
+            history += mess + "\n";
+    }
 
     if(pointCount > 0){
         //map to bezier curve
@@ -816,28 +1070,10 @@ const onMouseUp = (e) => {
 document.addEventListener("keydown", (event) => {
     if(writing_on_board){
         const alphanumericKey = /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/.test(event.key);
-        console.log(event.key);
+        //console.log(event.key);
         if(event.key.localeCompare("Enter") === 0){
             //Send Text
-
-            const mess = currentPenType +
-                "|" +
-                currentZIndex +
-                "|" +
-                text_size +
-                "|" +
-                text_color +
-                "|" +
-                p_text.text +
-                "|" +
-                p_text.x +
-                "|" +
-                p_text.y;
-            conn.send(
-                mess
-            );
-
-            history += mess + "\n";
+            sendTextToConn();
 
             writing_on_board = false;
         }
@@ -924,53 +1160,6 @@ document.getElementById('pdf-input').addEventListener('change', function(event) 
     initEvents(); //Add events
     initPDFRenderer(event); // render first page
 
-    /***************************************** 
-
-    var file = this.files[0];
-    var fileReader = new FileReader();
-    
-    fileReader.onload = function() {
-        //Send Other Peer
-        console.log(this.result);
-
-      var typedarray = new Uint8Array(this.result);
-      conn.send(
-        "-1" +
-        "|" +
-        typedarray
-    );
-       
-
-      pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
-        var pages = Array.from(Array(pdf.numPages).keys());
-        return Promise.all(pages.map(function(num) {
-          return pdf.getPage(num + 1);
-        }));
-      }).then(function(pages) {
-        
-        var iframe = document.getElementById('pdf-iframe');
-        canvasElements = pages.map(function(page) {
-            var canvas = document.createElement('canvas');
-            console.log(iframe);
-            var scale = Math.min(iframe.clientWidth / page.getViewport({scale: 1}).width, iframe.clientHeight / page.getViewport({scale: 1}).height);
-            var viewport = page.getViewport({scale: scale * 1.3});
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-            page.render({canvasContext: canvas.getContext('2d'), viewport: viewport}).promise.then(function() {});
-            return canvas;
-        });
-        
-        var doc = iframe.contentWindow.document;
-        doc.open();
-        doc.write("<html><body></body></html>");
-        canvasElements.forEach(function(canvas) {
-          doc.body.appendChild(canvas);
-        });
-        doc.close();
-      });
-    };
-    
-    fileReader.readAsArrayBuffer(file);*/
   });
 
 function initPDFRendererReceive(decodedMess) {
@@ -1173,3 +1362,12 @@ const resetWhiteboard = () => {
 
 document.resetWhiteboard = resetWhiteboard;
 
+//Select Check
+function SelectCheck(mouseX, mouseY, leftUpX, leftUpY, rightDownX, rightDownY){
+    //console.log(mouseX + " " + mouseY+ " " + leftUpX+ " " + leftUpY+ " " + rightDownX+ " " + rightDownY)
+
+    if(mouseX <= rightDownX && mouseX >= leftUpX && mouseY >= leftUpY && mouseY <= rightDownY){
+        return true;
+    }
+    return false;
+}

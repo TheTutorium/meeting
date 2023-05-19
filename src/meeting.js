@@ -1,4 +1,4 @@
-import { currentZIndex, setCurrentZIndex, history, setHistory, stage, setCanvasElements, canvasElements, changeInteractiveTool, receivePdf, goToPageHelper } from "./whiteboard.js";
+import { currentZIndex, setCurrentZIndex, history, setHistory, stage, setCanvasElements, canvasElements, changeInteractiveTool, receivePdf, goToPageHelper, interactibleObjects } from "./whiteboard.js";
 
 let Peer = window.Peer;
 
@@ -214,6 +214,7 @@ function handleWhiteboardData(data) {
         tempPText.x = tempX;
         tempPText.y = tempY;
 
+        interactibleObjects.push(tempPText);
         stage.addChild(tempPText);
     } else if (tempPenType == 3) {
         let temp_image = splittedMessage[2];
@@ -226,7 +227,20 @@ function handleWhiteboardData(data) {
         sprite.x = tempX;
         sprite.y = tempY;
 
+        interactibleObjects.push(sprite);
         stage.addChild(sprite);
+    } else if (tempPenType == 4) {
+        let temp_obj_index = parseInt(splittedMessage[1]);
+        let tempX = parseFloat(splittedMessage[2]);
+        let tempY = parseFloat(splittedMessage[3]); 
+        let tempWidth = parseFloat(splittedMessage[4]);
+        let tempHeight = parseFloat(splittedMessage[5]);
+        
+        interactibleObjects[temp_obj_index].position.x = tempX;
+        interactibleObjects[temp_obj_index].position.y = tempY;
+        interactibleObjects[temp_obj_index].width = tempWidth;
+        interactibleObjects[temp_obj_index].height = tempHeight;
+
     } else if (tempPenType == -1) {
         changeInteractiveTool(1);
 
