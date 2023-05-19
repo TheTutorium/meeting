@@ -291,11 +291,11 @@ checkPath();
 
 // Initialize the PeerJS connection
 if (connectToPeerId && myPeerId) {
-    peer = new Peer(myPeerId, {
-        host: "/",
-        path: "/peerjs/myapp",
-        port: 3000
-    });
+  peer = new Peer(myPeerId, {
+    host: "/",
+    path: "/peerjs/myapp",
+    port: 3000,
+  });
 
   if (myPeerId < connectToPeerId) {
     autoConnect = true;
@@ -303,11 +303,11 @@ if (connectToPeerId && myPeerId) {
   }
 }
 else {
-    peer = new Peer({
-        host: "/",
-        path: "/peerjs/myapp",
-        port: 3000
-    });
+  peer = new Peer({
+    host: "/",
+    path: "/peerjs/myapp",
+    port: 3000
+  });
 }
 
 // Event listener for the "open" event, fired when the connection to PeerServer is established

@@ -71,8 +71,6 @@ function sendTextToConn(){
 
 var last_mouse_button = 0;
 
-const penSizeInput = document.getElementById("pen-size");
-
 // listen for changes to the pen size input
 penSizeInput.addEventListener("input", () => {
   // get the new pen size value
@@ -80,26 +78,52 @@ penSizeInput.addEventListener("input", () => {
   
 });
 
-const eraserSizeInput = document.getElementById("eraser-size");
-
-// listen for changes to the pen size input
-eraserSizeInput.addEventListener("input", () => {
-  // get the new pen size value
-  eraser_size = parseInt(eraserSizeInput.value);
-  
+$('#tool-button-0').dropdown({
+    onChange: function(value, text, $selectedItem) {
+        // changing the value of pen_size based on the selection
+        if(value.charAt(0) != '0')
+            pen_size = parseInt(value);
+        else
+            pen_color = parseInt(value);
+        
+    }
 });
 
-// get the pen color select element
-const penColorSelect = document.getElementById("pen-color");
-
-// listen for changes to the pen color select
-penColorSelect.addEventListener("change", () => {
-  // get the new pen color value
-  pen_color = parseInt(penColorSelect.value);
-  
+$('#tool-button-1').dropdown({
+    onChange: function(value, text, $selectedItem) {
+        // changing the value of pen_size based on the selection
+        eraser_size = parseInt(value);        
+    }
+});
+$('#tool-button-2').dropdown({
+    onChange: function(value, text, $selectedItem) {
+        // changing the value of pen_size based on the selection
+        if(value.charAt(0) != '0'){
+            if(writing_on_board){
+                sendTextToConn();
+                writing_on_board = false;
+            }
+            
+                text_size = parseInt(value);    
+        }
+        else{
+            if(writing_on_board){
+                sendTextToConn();
+        
+                writing_on_board = false;
+              }
+        
+            text_color = parseInt(value);
+        }    
+    }
 });
 
-
+$('#screen-options-button').dropdown({
+    onChange: function(value, text, $selectedItem) {
+        // changing the value of pen_size based on the selection
+        
+    }
+});
 
 // get references to the pen-size input and the "Sample Text" element
 const textSizeInput = document.getElementById("text-size");
@@ -107,39 +131,7 @@ const sampleTextPointer = document.getElementById("sample-text");
 const textColorSelect = document.getElementById("text-color");
 
 // add an event listener to the pen-size input
-textSizeInput.addEventListener("input", () => {
-  // update the text of the "Sample Text" element
-  sampleTextPointer.textContent = "Sample Text";
-  
-  // update the font size of the "Sample Text" element based on the value of the pen-size input
-  const fontSize = `calc(${textSizeInput.value}px + (16px - ${textSizeInput.min}px) * (${textSizeInput.value} / (${textSizeInput.max} - ${textSizeInput.min})))`;
-  sampleTextPointer.style.fontSize = fontSize;
 
-  if(writing_on_board){
-    sendTextToConn();
-    writing_on_board = false;
-  }
-
-    text_size = textSizeInput.value;
-
-});
-
-textColorSelect.addEventListener("change", () => {
-    // get the selected option value
-    const fontColor = textColorSelect.value;
-    
-    // update the color of the "Sample Text" element
-    sampleTextPointer.style.color = fontColor;
-    
-    if(writing_on_board){
-        sendTextToConn();
-
-        writing_on_board = false;
-      }
-
-    text_color = fontColor;
-
-  });
 
 //Whiteboard Initialization
 const app = new PIXI.Application({
@@ -271,11 +263,6 @@ let currentInteractiveTool = 0;
 
 export const changeInteractiveTool = (tool) => {
     
-    const prevToolButtons = document.querySelector(`#tools-${currentInteractiveTool}`);
-    prevToolButtons.classList.add('hidden');
-
-    const currToolButtons = document.querySelector(`#tools-${tool}`);
-    currToolButtons.classList.remove('hidden');
 
     const prevTools = document.querySelector(`#interactive-${currentInteractiveTool}`);
     prevTools.classList.add('hidden');
@@ -285,17 +272,11 @@ export const changeInteractiveTool = (tool) => {
     
     currentInteractiveTool = tool;
 
-    // Get the previously selected button and remove its selected status
-    const prevButton = document.querySelector('.selected-interactive-button');
-    prevButton.classList.remove('selected-interactive-button');
-
-    // Get the currently selected button and add its selected status
-    const currButton = document.querySelector(`#interactive-button-${tool}`);
-    currButton.classList.add('selected-interactive-button');
 
     if(writing_on_board){
         sendTextToConn();
     }
+
     writing_on_board = false;
 
 };
@@ -339,26 +320,13 @@ let currentPenType = 0;
 
 const changePenType = (type) => {
     
-    const prevTools = document.querySelector(`#button-${currentPenType}-tools`);
-    prevTools.classList.add('hidden');
-
-    const currTools = document.querySelector(`#button-${type}-tools`);
-    currTools.classList.remove('hidden');
-    
     currentPenType = type;
     currentZIndex++;
-
-    // Get the previously selected button and remove its selected status
-    const prevButton = document.querySelector('.selected-button');
-    prevButton.classList.remove('selected-button');
-
-    // Get the currently selected button and add its selected status
-    const currButton = document.querySelector(`#tool-button-${type}`);
-    currButton.classList.add('selected-button');
 
     if(writing_on_board){
         sendTextToConn();
     }
+    
     writing_on_board = false;
 
     console.log(currentPenType);

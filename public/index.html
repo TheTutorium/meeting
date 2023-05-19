@@ -22,48 +22,37 @@
     <script src="/whiteboard.js" type="module"></script>
     <script src="/screenshare.js" type="module"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/scripts/fomantic-ui/dist/semantic.min.css">
+    <script src="/scripts/fomantic-ui/dist/semantic.min.js"></script>
   </head>
   <body>
-    <nav id="toolbar">
-      <ul>
-        <li>
-        <input type="text" id="connect-to-peer" placeholder="Enter Peer ID" ></input>
-      </li>
-      <li>
-        <button id="connectButton">
-          Connect
-        </button></li>
-      <li>
-        <button id="disconnectButton" disabled>
-          Disconnect
-        </button></li>
-      <li>
-        <button id="share-screen-button" class="tool" onclick="shareScreen()">Share Screen</button>
-      </li>
-        <li>
-          <div class="messages">
-      
-          </div>
+      <nav id="toolbar">
+        <ul>
+          <li>
+          <input type="text" id="connect-to-peer" placeholder="Enter Peer ID" ></input>
         </li>
-      </ul>
-    </nav>
-    <div id="interactive-selection">
-      <button id="interactive-button-0" onclick="changeInteractiveTool(0)" class="interactive-button selected-interactive-button">
-        Whiteboard
-      </button>
-      <button id="interactive-button-1" onclick="changeInteractiveTool(1)" class="interactive-button">
-        PDF viewer
-      </button>
-    </div>
-    <div id="main-container">
-      <div id="video-container">
-        <video id="remote-video" autoplay></video>
-    </div>
-    <div id="interactives">
-      <div id="interactive-0" class="white-board">
+        <li>
+          <button id="connectButton" class="ui button">
+            Connect
+          </button></li>
+          <li>
+            <div class="messages">
+        
+            </div>
+          </li>
+        </ul>
+      </nav>
+
+      <div id="main-container">
+        <div id="video-container">
+          <video id="remote-video" autoplay></video>
       </div>
-      <div  id="interactive-1" class="hidden">
-        <canvas id="pdf_canvas"></canvas>
+      <div id="interactives">
+        <div id="interactive-0" class="white-board">
+        </div>
+        <div  id="interactive-1" class="hidden">
+          <canvas id="pdf_canvas"></canvas>
           <div class="container">
             <button id="prev_page">Previos Page</button>
             <button id="next_page">next Page</button>
@@ -76,87 +65,87 @@
           </div>
           <input type="file" id="pdf-input">
 
+        </div>
+      </div>
+      <div id="video-container">
+        <video id="local-video" autoplay></video>
       </div>
     </div>
-    <div id="video-container">
-      <video id="local-video" autoplay></video>
+    <div id="tools-0" class="tools"> 
+      <button id="tool-button-0" onclick="changePenType(0)" class="tool huge  circular ui icon bottom left pointing dropdown button selected-button">
+        <i class="pen icon"></i>
+        <div class="menu">
+          <div class="header" style="font-size: 13px;">Size</div>
+          <div class="item" style="font-size: 13px;" data-value="8">Huge</div>
+          <div class="item" style="font-size: 13px;" data-value="4">Large</div>
+          <div class="item" style="font-size: 13px;" data-value="2">Medium</div>
+          <div class="item" style="font-size: 13px;" data-value="1">Small</div>
+          <div class="ui divider" style="font-size: 13px;"></div>
+          <div class="header"  style="font-size: 13px;">Color</div>
+          <div class="item" style="font-size: 13px;" data-value="0x000000"><div class="ui black empty circular label"></div>Black</div>
+          <div class="item" style="font-size: 13px;" data-value="0xff0000"><div class="ui red empty circular label"></div>Red</div>
+          <div class="item" style="font-size: 13px;" data-value="0x00ff00"><div class="ui green empty circular label"></div>Green</div>
+          <div class="item" style="font-size: 13px;" data-value="0x0000ff"><div class="ui blue empty circular label"></div>Blue</div>
+        </div>
+      </button>
+
+      <button id="tool-button-1" onclick="changePenType(1)" class="tool huge  circular ui icon bottom left pointing dropdown button selected-button">
+        <i class="eraser icon"></i>
+        <div class="menu">
+          <div class="header" style="font-size: 13px;">Size</div>
+          <div class="item" style="font-size: 13px;" data-value="16">Huge</div>
+          <div class="item" style="font-size: 13px;" data-value="8">Large</div>
+          <div class="item" style="font-size: 13px;" data-value="4">Medium</div>
+          <div class="item" style="font-size: 13px;" data-value="2">Small</div>
+        </div>
+      </button>
+      <button id="tool-button-2" onclick="changePenType(2)" class="tool huge  circular ui icon bottom left pointing dropdown button selected-button">
+        <i class="font icon"></i>
+        <div class="menu">
+          <div class="header" style="font-size: 13px;">Size</div>
+          <div class="item" style="font-size: 13px;" data-value="32">Huge</div>
+          <div class="item" style="font-size: 13px;" data-value="24">Large</div>
+          <div class="item" style="font-size: 13px;" data-value="18">Medium</div>
+          <div class="item" style="font-size: 13px;" data-value="12">Small</div>
+          <div class="ui divider" style="font-size: 13px;"></div>
+          <div class="header"  style="font-size: 13px;">Color</div>
+          <div class="item" style="font-size: 13px;" data-value="0x000000"><div class="ui black empty circular label"></div>Black</div>
+          <div class="item" style="font-size: 13px;" data-value="0xff0000"><div class="ui red empty circular label"></div>Red</div>
+          <div class="item" style="font-size: 13px;" data-value="0x00ff00"><div class="ui green empty circular label"></div>Green</div>
+          <div class="item" style="font-size: 13px;" data-value="0x0000ff"><div class="ui blue empty circular label"></div>Blue</div>
+        </div>
+      </button>
+
+      <input type="file" id="file-input" style="display: none;">
+      <button id="tool-button-3" onclick="changePenType(3); document.getElementById('file-input').click();" class="tool huge  circular ui icon button">
+        <i class="upload icon"></i>
+      </button>
+      <button id="tool-button-4" onclick="changePenType(4)" class="tool">
+        Select
+      </button>
+      <button id="reset-button" onclick="resetWhiteboard()" class="tool">
+        Reset
+      </button>
+      
+      <button id="save-button" onclick="saveWhiteboard()" class="tool huge circular ui icon button">
+        <i class="download icon"></i> 
+      </button>
+      <button id="screen-options-button" class="tool huge  circular ui icon bottom left pointing dropdown button">
+        <i class="ellipsis vertical icon"></i>
+        <div class="menu">
+          <div class="item" style="font-size: 13px;" onclick="changeInteractiveTool(0)"><i class="interactive-button chalkboard teacher icon"></i>Whiteboard</div>
+          <div class="item" style="font-size: 13px;" onclick="changeInteractiveTool(1)"><i class="interactive-button file pdf icon"></i>Share PDF</div>
+          <div class="item" style="font-size: 13px;" onclick="shareScreen()"><i class="desktop icon"></i>Share Screen</div>
+        </div>
+      </button>
+      <button id="disconnectButton" class="tool red  huge circular ui icon button" disabled>
+        <i class="phone slash icon"></i>
+      </button>
+      <button id="pdf-tool-button-0" onclick="shotImage()" class="pdf-tool">
+        Take Picture
+      </button>
     </div>
-  </div>
-    <div id="tools-0" class="tools">
-    <button id="tool-button-0" onclick="changePenType(0)" class="tool selected-button">
-      Pen
-    </button>
-    <button id="tool-button-1" onclick="changePenType(1)" class="tool">
-      Eraser
-    </button>
-    <button id="tool-button-2" onclick="changePenType(2)" class="tool">
-      Text
-    </button>
-    <button id="tool-button-3" onclick="changePenType(3)" class="tool">
-      Image
-    </button>
-    <button id="tool-button-4" onclick="changePenType(4)" class="tool">
-      Select
-    </button>
-    <button id="reset-button" onclick="resetWhiteboard()" class="tool">
-      Reset
-    </button>
-    <button id="save-button" onclick="saveWhiteboard()" class="tool">
-      Save
-    </button>
-    <button id="share-screen-button" class="tool hidden">
-      Share Screen
-    </button>
-
-  </div>
-
-  <div id="tools-1" class="tools hidden">
-    <button id="pdf-tool-button-0" onclick="shotImage()" class="pdf-tool">
-      Take Picture
-    </button>
-
-  </div>
-
-
-
-  <div id="button-0-tools" class="tool-additionals">
-    <label for="pen-size">Pen Size:</label>
-    <input type="range" id="pen-size" min="1" max="10" value="2">
   
-    <label for="pen-color">Pen Color:</label>
-    <select id="pen-color">
-      <option value="0x000000">Black</option>
-      <option value="0xff0000">Red</option>
-      <option value="0x00ff00">Green</option>
-      <option value="0x0000ff">Blue</option>
-    </select>
-  </div>
-  <div id="button-1-tools" class="tool-additionals hidden">
-    <label for="eraser-size">Eraser Size:</label>
-    <input type="range" id="eraser-size" min="5" max="20" value="10">
-  </div>
-  <div id="button-2-tools" class="tool-additionals hidden">
-    <label for="text-size">Text Size:</label>
-    <input type="range" id="text-size" min="5" max="64" value="14">
-    <span id="sample-text">Sample Text</span>
-  
-    <label for="text-color">Text Color:</label>
-    <select id="text-color">
-      <option value="0x000000">Black</option>
-      <option value="0xff0000">Red</option>
-      <option value="0x00ff00">Green</option>
-      <option value="0x0000ff">Blue</option>
-    </select>
-  </div>
-  <div id="button-3-tools" class="tool-additionals hidden">
-    <input type="file" id="file-input">
-  </div>
-  <div id="button-4-tools" class="tool-additionals hidden">
-  </div>
-  
-    
-    
-
   </body>
   
 </html>
