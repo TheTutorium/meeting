@@ -1151,6 +1151,9 @@ let canvasContext; // context of canvas
 let totalPages; // total  pages of pdf
 let currentPageNum = 1;
 
+
+
+
 export function receivePdf(decodedMess){
     isPageRendering= false;
     pageRenderingQueue = null;
