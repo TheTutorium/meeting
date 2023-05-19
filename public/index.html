@@ -53,17 +53,17 @@
         </div>
         <div  id="interactive-1" class="hidden">
           <canvas id="pdf_canvas"></canvas>
-            <div class="container">
-              <button id="prev_page">Previos Page</button>
-              <button id="next_page">next Page</button>
-              <span id="current_page_num"></span>
-                  of
-              <span id="total_page_num"></span>
+          <div class="container">
+            <button id="prev_page">Previos Page</button>
+            <button id="next_page">next Page</button>
+            <span id="current_page_num"></span>
+                of
+            <span id="total_page_num"></span>
 
-              <input type="text" id="page_num">
-              <button id="go_to_page">Go To Page</button>
-            </div>
-            <input type="file" id="pdf-input">
+            <input type="text" id="page_num">
+            <button id="go_to_page">Go To Page</button>
+          </div>
+          <input type="file" id="pdf-input">
 
         </div>
       </div>
@@ -119,6 +119,12 @@
       <input type="file" id="file-input" style="display: none;">
       <button id="tool-button-3" onclick="changePenType(3); document.getElementById('file-input').click();" class="tool huge  circular ui icon button">
         <i class="upload icon"></i>
+      </button>
+      <button id="tool-button-4" onclick="changePenType(4)" class="tool">
+        Select
+      </button>
+      <button id="reset-button" onclick="resetWhiteboard()" class="tool">
+        Reset
       </button>
       
       <button id="save-button" onclick="saveWhiteboard()" class="tool huge circular ui icon button">
