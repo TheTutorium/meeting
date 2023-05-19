@@ -1,6 +1,5 @@
 const express = require("express");
 const { ExpressPeerServer } = require("peer");
-const morgan = require('morgan');
 
 const app = express();
 const PORT = process.env.PORT || 3000;  // use port from environment if available
@@ -9,7 +8,6 @@ const PORT = process.env.PORT || 3000;  // use port from environment if availabl
 app.use("/scripts", express.static(__dirname + "/node_modules"));
 app.use(express.static(__dirname + "/src"));
 app.use("/public", express.static(__dirname + "/public"));
-app.use(morgan('combined')); // Specify the desired log format
 
 // setup routing
 app.get("/", (request, response) => {
@@ -35,14 +33,6 @@ app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
-
-app.use((err, req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    console.error(err);
-    // res.status(500).send('Internal Server Error');
-    next();
-  });
 
 // listen for requests
 const server = app.listen(PORT, () => {

@@ -8,6 +8,7 @@ export let conn;
 let localStream;
 let isConnecting = false;
 let autoConnect = false;
+let connectInterval;
 
 let myPeerId = null;
 let connectToPeerId = null;
@@ -64,6 +65,7 @@ function handleConnect() {
   isConnecting = true;
   conn = peer.connect(remotePeerId); // Connect to the remote peer
   conn.on('open', () => {
+    clearInterval(connectInterval);
     autoConnect = false;
     connectButton.disabled = true; // Disable the button after successful connection
     disconnectButton.disabled = false;
@@ -108,10 +110,7 @@ function handleDisconnect() {
   disconnectButton.disabled = true; // Disable the "Disconnect" button
 
   if (autoConnect) {
-    setTimeout(() => {
-      console.log("After waiting 5 seconds");
-      handleConnect();
-    }, 5000);
+    handleConnect();
   }
 }
 
@@ -247,7 +246,6 @@ function handleData(data) {
     handleWhiteboardData(data);
     return;
   }
-  console.log("handleData => " + data);
   if (data === '|video-call-request') {
     // Handle the received video call request
     if (confirm('Incoming video call. Do you want to accept?')) {
@@ -286,7 +284,7 @@ if (connectToPeerId && myPeerId) {
 
   if (myPeerId < connectToPeerId) {
     autoConnect = true;
-    handleConnect();
+    connectInterval = setInterval(handleDisconnect, 10000);
   }
 }
 else {
