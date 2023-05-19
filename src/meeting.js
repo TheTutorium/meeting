@@ -8,6 +8,7 @@ export let conn;
 let localStream;
 let isConnecting = false;
 let autoConnect = false;
+let connectInterval;
 
 let myPeerId = null;
 let connectToPeerId = null;
@@ -61,12 +62,13 @@ function handleConnect() {
         return;
     }
 
-    isConnecting = true;
-    conn = peer.connect(remotePeerId); // Connect to the remote peer
-    conn.on('open', () => {
-        autoConnect = false;
-        connectButton.disabled = true; // Disable the button after successful connection
-        disconnectButton.disabled = false;
+  isConnecting = true;
+  conn = peer.connect(remotePeerId); // Connect to the remote peer
+  conn.on('open', () => {
+    clearInterval(connectInterval);
+    autoConnect = false;
+    connectButton.disabled = true; // Disable the button after successful connection
+    disconnectButton.disabled = false;
 
         conn.send('|video-call-request'); // Send a video call request to the remote peer
         isConnecting = false;
@@ -107,12 +109,9 @@ function handleDisconnect() {
     connectButton.disabled = false; // Enable the "Connect" button
     disconnectButton.disabled = true; // Disable the "Disconnect" button
 
-    if (autoConnect) {
-        setTimeout(() => {
-            console.log("After waiting 5 seconds");
-            handleConnect();
-        }, 5000);
-    }
+  if (autoConnect) {
+    handleConnect();
+  }
 }
 
 // Function to enable the connection after a disconnection
@@ -257,31 +256,30 @@ function handleWhiteboardData(data) {
 
 // Function to handle the received data from the remote peer
 function handleData(data) {
-    if (data[0] != '|') {
-        handleWhiteboardData(data);
-        return;
+  if (data[0] != '|') {
+    handleWhiteboardData(data);
+    return;
+  }
+  if (data === '|video-call-request') {
+    // Handle the received video call request
+    if (confirm('Incoming video call. Do you want to accept?')) {
+      conn.send('|video-call-accept'); // Send an acceptance message to the remote peer
+    } else {
+      conn.send('|video-call-reject'); // Send a rejection message to the remote peer
+      conn.close(); // Close the connection
+      connectButton.disabled = false; // Enable the "Connect" button
+      isConnecting = false;
     }
-    console.log("handleData => " + data);
-    if (data === '|video-call-request') {
-        // Handle the received video call request
-        if (confirm('Incoming video call. Do you want to accept?')) {
-            conn.send('|video-call-accept'); // Send an acceptance message to the remote peer
-        } else {
-            conn.send('|video-call-reject'); // Send a rejection message to the remote peer
-            conn.close(); // Close the connection
-            connectButton.disabled = false; // Enable the "Connect" button
-            isConnecting = false;
-        }
-    } else if (data === '|video-call-accept') {
-        // Handle the acceptance message from the remote peer
-        startVideoCall();
-    } else if (data === '|video-call-reject') {
-        // Handle the rejection message from the remote peer
-        alert('The video call request was rejected.');
-        conn.close(); // Close the connection
-        connectButton.disabled = false; // Enable the "Connect" button
-        isConnecting = false;
-    }
+  } else if (data === '|video-call-accept') {
+    // Handle the acceptance message from the remote peer
+    startVideoCall();
+  } else if (data === '|video-call-reject') {
+    // Handle the rejection message from the remote peer
+    alert('The video call request was rejected.');
+    conn.close(); // Close the connection
+    connectButton.disabled = false; // Enable the "Connect" button
+    isConnecting = false;
+  }
 }
 
 // Function to handle the incoming video stream from the remote peer
@@ -299,10 +297,10 @@ if (connectToPeerId && myPeerId) {
         port: 3000
     });
 
-    if (myPeerId < connectToPeerId) {
-        autoConnect = true;
-        handleConnect();
-    }
+  if (myPeerId < connectToPeerId) {
+    autoConnect = true;
+    connectInterval = setInterval(handleDisconnect, 10000);
+  }
 }
 else {
     peer = new Peer({
