@@ -132,7 +132,7 @@ const textColorSelect = document.getElementById("text-color");
 const app = new PIXI.Application({
     antialias: true,
     background: "#ffffff",
-    width: window.innerWidth * 0.4,
+    width: window.innerWidth * 0.5,
     height: window.innerHeight * 0.5,
 });
 
@@ -276,7 +276,58 @@ export const changeInteractiveTool = (tool) => {
 
 };
 
+const penButton = document.getElementById('tool-button-0');
+const eraserButton = document.getElementById('tool-button-1');
+const textButton = document.getElementById('tool-button-2');
+const uploadImgButton = document.getElementById('tool-button-3');
+const selectButton = document.getElementById('tool-button-4');
+const resetButton = document.getElementById('reset-button');
+const downloadButton = document.getElementById('save-button');
+const leftButton = document.getElementById('prev_page');
+const pageField = document.getElementById('page_input');
+const rightButton = document.getElementById('next_page');
+const uploadPdfButton = document.getElementById('upload-pdf');
+const edditButton = document.getElementById('pdf-tool-button-0');
+
+const whiteboardClicked = () => {
+    changeInteractiveTool(0);
+    
+    penButton.classList.remove('hidden');
+    eraserButton.classList.remove('hidden');
+    textButton.classList.remove('hidden');
+    uploadImgButton.classList.remove('hidden');
+    selectButton.classList.remove('hidden');
+    resetButton.classList.remove('hidden');
+    downloadButton.classList.remove('hidden');
+
+    leftButton.classList.add('hidden');
+    pageField.classList.add('hidden');
+    rightButton.classList.add('hidden');
+    uploadPdfButton.classList.add('hidden');
+    edditButton.classList.add('hidden');
+};
+const pdfviewClicked = () => {
+    changeInteractiveTool(1);
+
+    penButton.classList.add('hidden');
+    eraserButton.classList.add('hidden');
+    textButton.classList.add('hidden');
+    uploadImgButton.classList.add('hidden');
+    selectButton.classList.add('hidden');
+    resetButton.classList.add('hidden');
+    downloadButton.classList.add('hidden');
+
+    leftButton.classList.remove('hidden');
+    pageField.classList.remove('hidden');
+    rightButton.classList.remove('hidden');
+    uploadPdfButton.classList.remove('hidden');
+    edditButton.classList.remove('hidden');
+};
+
+
 window.changeInteractiveTool = changeInteractiveTool;
+window.whiteboardClicked = whiteboardClicked;
+window.pdfviewClicked = pdfviewClicked;
 
 // Whiteboard Part
 
@@ -1153,8 +1204,6 @@ function initPDFRendererReceive(decodedMess) {
         .promise
         .then( pdfData => {
                 totalPages = pdfData.numPages; // total number of pages 
-                let pagesCounter= document.getElementById('total_page_num'); // update total pages text
-                pagesCounter.textContent = totalPages;
                 // assigning read pdfContent to global variable
                 pdf = pdfData;
                 console.log(pdfData);
@@ -1191,8 +1240,6 @@ function initPDFRenderer(event) {
             .promise
             .then( pdfData => {
                     totalPages = pdfData.numPages; // total number of pages 
-                    let pagesCounter= document.getElementById('total_page_num'); // update total pages text
-                    pagesCounter.textContent = totalPages;
                     // assigning read pdfContent to global variable
                     pdf = pdfData;
                     console.log(pdfData);
@@ -1209,15 +1256,15 @@ function initPDFRenderer(event) {
 function initEvents() {
     let prevPageBtn = document.getElementById('prev_page');
     let nextPageBtn = document.getElementById('next_page');
-    let goToPage = document.getElementById('go_to_page');
+    let goToPage = document.getElementById('page_input_text');
     prevPageBtn.addEventListener('click', renderPreviousPage);
     nextPageBtn.addEventListener('click',renderNextPage);
-    goToPage.addEventListener('click', goToPageNum);
+    goToPage.addEventListener('change', goToPageNum);
 }
 
 function renderPage(pageNumToRender = 1) {
     isPageRendering = true; 
-    document.getElementById('current_page_num').textContent = pageNumToRender;
+    document.getElementById('page_input_text').placeholder  = pageNumToRender + "/" + totalPages;
     // use getPage method
     
     pdf
@@ -1287,7 +1334,7 @@ function renderPreviousPage(ev) {
 }
 
 function goToPageNum(ev) {
-    let numberInput = document.getElementById('page_num');
+    let numberInput = document.getElementById('page_input_text');
     let pageNumber = parseInt(numberInput.value);
 
     //Send Page info
@@ -1302,7 +1349,7 @@ function goToPageNum(ev) {
 }
 
 export function goToPageHelper(pageNumber){
-    let numberInput = document.getElementById('page_num');
+    let numberInput = document.getElementById('page_input_text');
     if(pageNumber) {
         if(pageNumber <= totalPages && pageNumber >= 1){
             currentPageNum = pageNumber;

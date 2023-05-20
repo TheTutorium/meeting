@@ -32,23 +32,6 @@
     <script src="/screenshare.js" type="module"></script>
   </head>
   <body>
-      <nav id="toolbar">
-        <ul>
-          <li>
-          <input type="text" id="connect-to-peer" placeholder="Enter Peer ID" ></input>
-        </li>
-        <li>
-          <button id="connectButton" class="ui button">
-            Connect
-          </button></li>
-          <li>
-            <div class="messages">
-        
-            </div>
-          </li>
-        </ul>
-      </nav>
-
       <div id="main-container">
         <div id="video-container">
           <video id="remote-video" autoplay></video>
@@ -58,18 +41,6 @@
         </div>
         <div  id="interactive-1" class="hidden">
           <canvas id="pdf_canvas"></canvas>
-          <div class="container">
-            <button id="prev_page">Previos Page</button>
-            <button id="next_page">next Page</button>
-            <span id="current_page_num"></span>
-                of
-            <span id="total_page_num"></span>
-
-            <input type="text" id="page_num">
-            <button id="go_to_page">Go To Page</button>
-          </div>
-          <input type="file" id="pdf-input">
-
         </div>
       </div>
       <div id="video-container">
@@ -77,80 +48,100 @@
       </div>
     </div>
     <div id="tools-0" class="tools"> 
-      <button id="tool-button-0" onclick="changePenType(0)" class="tool huge  circular ui icon bottom left pointing dropdown button selected-button">
-        <i class="pen icon"></i>
-        <div class="menu">
-          <div class="header" style="font-size: 13px;">Size</div>
-          <div class="item" style="font-size: 13px;" data-value="8">Huge</div>
-          <div class="item" style="font-size: 13px;" data-value="4">Large</div>
-          <div class="item" style="font-size: 13px;" data-value="2">Medium</div>
-          <div class="item" style="font-size: 13px;" data-value="1">Small</div>
-          <div class="ui divider" style="font-size: 13px;"></div>
-          <div class="header"  style="font-size: 13px;">Color</div>
-          <div class="item" style="font-size: 13px;" data-value="0x000000"><div class="ui black empty circular label"></div>Black</div>
-          <div class="item" style="font-size: 13px;" data-value="0xff0000"><div class="ui red empty circular label"></div>Red</div>
-          <div class="item" style="font-size: 13px;" data-value="0x00ff00"><div class="ui green empty circular label"></div>Green</div>
-          <div class="item" style="font-size: 13px;" data-value="0x0000ff"><div class="ui blue empty circular label"></div>Blue</div>
-        </div>
-      </button>
+      <div class="toolsbar ui compact segment" style="display: inline-block;">
+        <button id="tool-button-0" onclick="changePenType(0)" class="tool large  circular ui icon bottom left pointing dropdown button selected-button">
+          <i class="pen icon"></i>
+          <div class="menu">
+            <div class="header" style="font-size: 13px;">Size</div>
+            <div class="item" style="font-size: 13px;" data-value="8">Huge</div>
+            <div class="item" style="font-size: 13px;" data-value="4">Large</div>
+            <div class="item" style="font-size: 13px;" data-value="2">Medium</div>
+            <div class="item" style="font-size: 13px;" data-value="1">Small</div>
+            <div class="ui divider" style="font-size: 13px;"></div>
+            <div class="header"  style="font-size: 13px;">Color</div>
+            <div class="item" style="font-size: 13px;" data-value="0x000000"><div class="ui black empty circular label"></div>Black</div>
+            <div class="item" style="font-size: 13px;" data-value="0xff0000"><div class="ui red empty circular label"></div>Red</div>
+            <div class="item" style="font-size: 13px;" data-value="0x00ff00"><div class="ui green empty circular label"></div>Green</div>
+            <div class="item" style="font-size: 13px;" data-value="0x0000ff"><div class="ui blue empty circular label"></div>Blue</div>
+          </div>
+        </button>
 
-      <button id="tool-button-1" onclick="changePenType(1)" class="tool huge  circular ui icon bottom left pointing dropdown button selected-button">
-        <i class="eraser icon"></i>
-        <div class="menu">
-          <div class="header" style="font-size: 13px;">Size</div>
-          <div class="item" style="font-size: 13px;" data-value="16">Huge</div>
-          <div class="item" style="font-size: 13px;" data-value="8">Large</div>
-          <div class="item" style="font-size: 13px;" data-value="4">Medium</div>
-          <div class="item" style="font-size: 13px;" data-value="2">Small</div>
-        </div>
-      </button>
-      <button id="tool-button-2" onclick="changePenType(2)" class="tool huge  circular ui icon bottom left pointing dropdown button selected-button">
-        <i class="font icon"></i>
-        <div class="menu">
-          <div class="header" style="font-size: 13px;">Size</div>
-          <div class="item" style="font-size: 13px;" data-value="32">Huge</div>
-          <div class="item" style="font-size: 13px;" data-value="24">Large</div>
-          <div class="item" style="font-size: 13px;" data-value="18">Medium</div>
-          <div class="item" style="font-size: 13px;" data-value="12">Small</div>
-          <div class="ui divider" style="font-size: 13px;"></div>
-          <div class="header"  style="font-size: 13px;">Color</div>
-          <div class="item" style="font-size: 13px;" data-value="0x000000"><div class="ui black empty circular label"></div>Black</div>
-          <div class="item" style="font-size: 13px;" data-value="0xff0000"><div class="ui red empty circular label"></div>Red</div>
-          <div class="item" style="font-size: 13px;" data-value="0x00ff00"><div class="ui green empty circular label"></div>Green</div>
-          <div class="item" style="font-size: 13px;" data-value="0x0000ff"><div class="ui blue empty circular label"></div>Blue</div>
-        </div>
-      </button>
+        <button id="tool-button-1" onclick="changePenType(1)" class="tool large  circular ui icon bottom left pointing dropdown button selected-button">
+          <i class="eraser icon"></i>
+          <div class="menu">
+            <div class="header" style="font-size: 13px;">Size</div>
+            <div class="item" style="font-size: 13px;" data-value="16">Huge</div>
+            <div class="item" style="font-size: 13px;" data-value="8">Large</div>
+            <div class="item" style="font-size: 13px;" data-value="4">Medium</div>
+            <div class="item" style="font-size: 13px;" data-value="2">Small</div>
+          </div>
+        </button>
+        <button id="tool-button-2" onclick="changePenType(2)" class="tool large  circular ui icon bottom left pointing dropdown button selected-button">
+          <i class="font icon"></i>
+          <div class="menu">
+            <div class="header" style="font-size: 13px;">Size</div>
+            <div class="item" style="font-size: 13px;" data-value="32">Huge</div>
+            <div class="item" style="font-size: 13px;" data-value="24">Large</div>
+            <div class="item" style="font-size: 13px;" data-value="18">Medium</div>
+            <div class="item" style="font-size: 13px;" data-value="12">Small</div>
+            <div class="ui divider" style="font-size: 13px;"></div>
+            <div class="header"  style="font-size: 13px;">Color</div>
+            <div class="item" style="font-size: 13px;" data-value="0x000000"><div class="ui black empty circular label"></div>Black</div>
+            <div class="item" style="font-size: 13px;" data-value="0xff0000"><div class="ui red empty circular label"></div>Red</div>
+            <div class="item" style="font-size: 13px;" data-value="0x00ff00"><div class="ui green empty circular label"></div>Green</div>
+            <div class="item" style="font-size: 13px;" data-value="0x0000ff"><div class="ui blue empty circular label"></div>Blue</div>
+          </div>
+        </button>
 
-      <input type="file" id="file-input" style="display: none;">
-      <button id="tool-button-3" onclick="changePenType(3); document.getElementById('file-input').click();" class="tool huge  circular ui icon button">
-        <i class="upload icon"></i>
-      </button>
-      <button id="tool-button-4" onclick="changePenType(4)" class="tool">
-        Select
-      </button>
-      <button id="reset-button" onclick="resetWhiteboard()" class="tool">
-        Reset
-      </button>
-      
-      <button id="save-button" onclick="saveWhiteboard()" class="tool huge circular ui icon button">
-        <i class="download icon"></i> 
-      </button>
-      <button id="screen-options-button" class="tool huge  circular ui icon bottom left pointing dropdown button">
-        <i class="ellipsis vertical icon"></i>
-        <div class="menu">
-          <div class="item" style="font-size: 13px;" onclick="changeInteractiveTool(0)"><i class="interactive-button chalkboard teacher icon"></i>Whiteboard</div>
-          <div class="item" style="font-size: 13px;" onclick="changeInteractiveTool(1)"><i class="interactive-button file pdf icon"></i>Share PDF</div>
-          <div class="item" style="font-size: 13px;" onclick="shareScreen()"><i class="desktop icon"></i>Share Screen</div>
+        <input type="file" id="file-input" style="display: none;">
+        <button id="tool-button-3" onclick="changePenType(3); document.getElementById('file-input').click();" class="tool large  circular ui icon button">
+          <i class="upload icon"></i>
+        </button>
+        <button id="tool-button-4" onclick="changePenType(4)" class="tool large  circular ui icon button">
+          <i class="hand pointer icon"></i>
+        </button>
+        <button id="reset-button" onclick="resetWhiteboard()" class="tool large  circular ui icon button">
+          <i class="redo alternate icon"></i>
+        </button>
+        
+        <button id="save-button" onclick="saveWhiteboard()" class="tool large circular ui icon button">
+          <i class="download icon"></i> 
+        </button>
+        <button id="prev_page" class="tool large circular ui icon button hidden">
+          <i class="arrow left icon"></i> 
+        </button>
+        <div id="page_input" class="ui input hidden">
+          <input id="page_input_text" type="text" placeholder="0/0">
         </div>
-      </button>
-      <button id="disconnectButton" class="tool red  huge circular ui icon button" disabled>
-        <i class="phone slash icon"></i>
-      </button>
-      <button id="pdf-tool-button-0" onclick="shotImage()" class="pdf-tool">
-        Take Picture
+        <button id="next_page" class="tool large circular ui icon button hidden">
+          <i class="arrow right icon"></i> 
+        </button>
+        <input type="file" id="pdf-input" style="display: none;">
+        <button id="upload-pdf" onclick="document.getElementById('pdf-input').click()" class="tool large  circular ui icon button hidden">
+          <i class="upload icon"></i>  
+        </button>
+        <button id="pdf-tool-button-0" onclick="shotImage()" class="tool large circular ui icon button hidden">
+          <i class="edit icon"></i> 
+        </button>
+        <button id="screen-options-button" class="tool large  circular ui icon bottom left pointing dropdown button">
+          <i class="ellipsis vertical icon"></i>
+          <div class="menu">
+            <div class="item" style="font-size: 13px;" onclick="whiteboardClicked()"><i class="interactive-button chalkboard teacher icon"></i>Whiteboard</div>
+            <div class="item" style="font-size: 13px;" onclick="pdfviewClicked()"><i class="interactive-button file pdf icon"></i>Share PDF</div>
+            <div class="item" style="font-size: 13px;" onclick="shareScreen()"><i class="desktop icon"></i>Share Screen</div>
+          </div>
+        </button>
+        <button id="disconnectButton" class="tool red large circular ui icon button" disabled>
+          <i class="phone slash icon"></i>
+        </button>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: center;">
+      <input type="text" id="connect-to-peer" placeholder="Enter Peer ID" ></input>
+      <button id="connectButton" class="ui button">
+        Connect
       </button>
     </div>
-  
   </body>
   
 </html>
