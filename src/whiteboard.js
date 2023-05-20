@@ -222,22 +222,7 @@ function onCanvasScroll(event) {
     stage.position.set(-canvas_translation.x, -canvas_translation.y);
 
 
-    /*var newMiddlePoint = transformPoint(0,0);
-
-    var temp_dist = {x: middlePoint.x - newMiddlePoint.x, y: middlePoint.y - newMiddlePoint.y};
-
-    stage.position.set(stage.position.x + (temp_dist.x / canvas_scale), stage.position.y + (temp_dist.y / canvas_scale));
-
-    canvas_translation = {x: canvas_translation.x + (temp_dist.x / canvas_scale), y: canvas_translation.y + (temp_dist.y / canvas_scale)};*/
-
 }
-
-
-/*const whiteboard = new PIXI.Graphics();
-whiteboard.beginFill(0xffffff);
-whiteboard.drawRect(0, 0, 800, 600);
-whiteboard.endFill();
-stage.addChild(whiteboard);*/
 
 var sprite = new PIXI.Graphics();
 
@@ -277,6 +262,7 @@ export const changeInteractiveTool = (tool) => {
 };
 
 window.changeInteractiveTool = changeInteractiveTool;
+
 
 // Whiteboard Part
 
@@ -350,7 +336,7 @@ export function setCanvasElements(newValue) {
     canvasElements = newValue;
 }
 
-const HOVER_RANGE = 10;
+const HOVER_RANGE = 3;
 
 function checkCorner(mousePos, corner){
     const t_corner = reverseTransformPoint(corner.x, corner.y);
@@ -490,6 +476,8 @@ function transformSprite( curMousePosRef){
         default:
     }
 }
+
+
 
 const onMouseMove = (e) => {
     const curMousePosRef = getMousePos(e);
@@ -1099,11 +1087,14 @@ container.addEventListener("mousedown", onMouseDown, 0);
 container.addEventListener("mouseup", onMouseUp, 0);
 
 
+//Mouse Cursor Change
+
+//canvas.classList.add('pen-cursor');
+
 //PDF Share
 
 /*IMPORTANT NOTES!!!!!!!!!!!!!!!!!!!
     Make pdfs fit to page
-    Solve not rendering text problem
 */
 
 let pdf ; // to store pdf data 
