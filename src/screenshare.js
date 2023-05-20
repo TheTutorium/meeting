@@ -1,4 +1,4 @@
-import { currentCall } from './meeting.js';
+import { currentCall, sendDataToPeer } from './meeting.js';
 
 let screenStream = null; // Variable to store the screen sharing stream
 let currentlySharing = false;
@@ -9,6 +9,8 @@ let shareScreen = () => {
   if (currentlySharing) {
     return;
   }
+
+  sendDataToPeer("|share-screen-start");
 
   navigator.mediaDevices.getDisplayMedia({ video: true })
     .then((stream) => {
@@ -29,6 +31,8 @@ let shareScreen = () => {
 };
 
 function handleScreenShareEnded(event) {
+
+  sendDataToPeer("|share-screen-stop");
 
   // Replace the video track of the peer connection sender with the camera video track
   // Store the camera video stream
