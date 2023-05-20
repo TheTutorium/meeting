@@ -1,4 +1,4 @@
-import { peer, conn  } from './meeting.js';
+import { peer, conn } from './meeting.js';
 
 //const fmin = require('./fmin');
 
@@ -13,7 +13,7 @@ let hoverBorder = null;
 
 export let interactibleObjects = [];
 
-const selectCheck = {upperLeft: false, upperRight: false, lowerRight: false, lowerLeft: false, up: false, right: false, down: false, left: false, on: false};
+const selectCheck = { upperLeft: false, upperRight: false, lowerRight: false, lowerLeft: false, up: false, right: false, down: false, left: false, on: false };
 
 const maxPointForBezierCurve = 50;
 
@@ -42,11 +42,11 @@ var textStyle = new PIXI.TextStyle({
 
 var p_text = new PIXI.Text("Hello, world!", textStyle);
 
-function sendTextToConn(){
+function sendTextToConn() {
     interactibleObjects.push(p_text);
     console.log(p_text);
 
-    if(cursor_added){
+    if (cursor_added) {
         removeCursor();
     }
 
@@ -74,49 +74,49 @@ var last_mouse_button = 0;
 
 
 $('#tool-button-0').dropdown({
-    onChange: function(value, text, $selectedItem) {
+    onChange: function (value, text, $selectedItem) {
         // changing the value of pen_size based on the selection
-        if(value.charAt(0) != '0')
+        if (value.charAt(0) != '0')
             pen_size = parseInt(value);
         else
             pen_color = parseInt(value);
-        
+
     }
 });
 
 $('#tool-button-1').dropdown({
-    onChange: function(value, text, $selectedItem) {
+    onChange: function (value, text, $selectedItem) {
         // changing the value of pen_size based on the selection
-        eraser_size = parseInt(value);        
+        eraser_size = parseInt(value);
     }
 });
 $('#tool-button-2').dropdown({
-    onChange: function(value, text, $selectedItem) {
+    onChange: function (value, text, $selectedItem) {
         // changing the value of pen_size based on the selection
-        if(value.charAt(0) != '0'){
-            if(writing_on_board){
+        if (value.charAt(0) != '0') {
+            if (writing_on_board) {
                 sendTextToConn();
                 writing_on_board = false;
             }
-            
-                text_size = parseInt(value);    
+
+            text_size = parseInt(value);
         }
-        else{
-            if(writing_on_board){
+        else {
+            if (writing_on_board) {
                 sendTextToConn();
-        
+
                 writing_on_board = false;
-              }
-        
+            }
+
             text_color = parseInt(value);
-        }    
+        }
     }
 });
 
 $('#screen-options-button').dropdown({
-    onChange: function(value, text, $selectedItem) {
+    onChange: function (value, text, $selectedItem) {
         // changing the value of pen_size based on the selection
-        
+
     }
 });
 
@@ -159,22 +159,22 @@ canvas.addEventListener('wheel', onCanvasScroll);
 const SCALE_CONST = 0.1;
 
 var canvas_scale = 1.0;
-var canvas_translation = {x: 0.0, y: 0.0};
+var canvas_translation = { x: 0.0, y: 0.0 };
 
 
-function transformPoint(x,y){
+function transformPoint(x, y) {
 
     var newX = (x + canvas_translation.x) / canvas_scale;
     var newY = (y + canvas_translation.y) / canvas_scale;
 
 
-    return {x: newX, y: newY};
+    return { x: newX, y: newY };
 }
 
 function reverseTransformPoint(x, y) {
     var newX = x * canvas_scale - canvas_translation.x;
     var newY = y * canvas_scale - canvas_translation.y;
-  
+
     return { x: newX, y: newY };
 }
 
@@ -185,18 +185,18 @@ var current_image;
 var image_texture;
 
 fileInput.addEventListener('change', (event) => {
-  const file = event.target.files[0];
-  const reader = new FileReader();
-  reader.onload = () => {
-    current_image = reader.result;
-    console.log(current_image);
-    /*image_texture = PIXI.Texture.from(reader.result);
-    
-    const sprite = new PIXI.Sprite(texture);
-    stage.addChild(sprite);*/
-    have_file = true;
-  };
-  reader.readAsDataURL(file);
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+        current_image = reader.result;
+        console.log(current_image);
+        /*image_texture = PIXI.Texture.from(reader.result);
+        
+        const sprite = new PIXI.Sprite(texture);
+        stage.addChild(sprite);*/
+        have_file = true;
+    };
+    reader.readAsDataURL(file);
 });
 
 // Define the 'onCanvasScroll' function
@@ -216,9 +216,9 @@ function onCanvasScroll(event) {
     stage.scale.set(stage.scale.x * (1 - delta));
     canvas_scale = stage.scale.x;
 
-    const translation = {x: middlePoint.x * (canvas_scale - prev_scale), y: middlePoint.y * (canvas_scale - prev_scale)}
+    const translation = { x: middlePoint.x * (canvas_scale - prev_scale), y: middlePoint.y * (canvas_scale - prev_scale) }
 
-    canvas_translation = {x: canvas_translation.x + translation.x, y: canvas_translation.y + translation.y};
+    canvas_translation = { x: canvas_translation.x + translation.x, y: canvas_translation.y + translation.y };
     stage.position.set(-canvas_translation.x, -canvas_translation.y);
 
 
@@ -257,18 +257,18 @@ var mousePosRef;
 let currentInteractiveTool = 0;
 
 export const changeInteractiveTool = (tool) => {
-    
+
 
     const prevTools = document.querySelector(`#interactive-${currentInteractiveTool}`);
     prevTools.classList.add('hidden');
 
     const currTools = document.querySelector(`#interactive-${tool}`);
     currTools.classList.remove('hidden');
-    
+
     currentInteractiveTool = tool;
 
 
-    if(writing_on_board){
+    if (writing_on_board) {
         sendTextToConn();
     }
 
@@ -285,20 +285,20 @@ var save_count = 0;
 const saveWhiteboard = () => {
 
     const element = document.createElement('a');
-  
+
     // Set the text content and file name
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(history));
     element.setAttribute('download', "save_" + save_count + ".wb");
 
     // Hide the anchor element
     element.style.display = 'none';
-    
+
     // Append the anchor element to the document
     document.body.appendChild(element);
-    
+
     // Programmatically click the anchor element
     element.click();
-    
+
     // Remove the anchor element from the document
     document.body.removeChild(element);
 
@@ -314,11 +314,11 @@ export function setCurrentZIndex(newValue) {
 let currentPenType = 0;
 
 const changePenType = (type) => {
-    
+
     currentPenType = type;
     currentZIndex++;
 
-    if(writing_on_board){
+    if (writing_on_board) {
         sendTextToConn();
     }
 
@@ -352,9 +352,9 @@ export function setCanvasElements(newValue) {
 
 const HOVER_RANGE = 10;
 
-function checkCorner(mousePos, corner){
+function checkCorner(mousePos, corner) {
     const t_corner = reverseTransformPoint(corner.x, corner.y);
-    if(Math.abs(mousePos.x - t_corner.x) <= HOVER_RANGE &&  Math.abs(mousePos.y - t_corner.y) <= HOVER_RANGE){
+    if (Math.abs(mousePos.x - t_corner.x) <= HOVER_RANGE && Math.abs(mousePos.y - t_corner.y) <= HOVER_RANGE) {
         return true;
     }
     return false;
@@ -366,41 +366,41 @@ function isBetween(number, bound1, bound2) {
     return number > lowerBound && number < upperBound;
 }
 
-function checkEdge(mousePos, corner1, corner2){
+function checkEdge(mousePos, corner1, corner2) {
     const t_corner1 = reverseTransformPoint(corner1.x, corner1.y);
     const t_corner2 = reverseTransformPoint(corner2.x, corner2.y);
-    if(t_corner1.x == t_corner2.x){
-        if(Math.abs(t_corner1.x - mousePos.x) <= HOVER_RANGE){
+    if (t_corner1.x == t_corner2.x) {
+        if (Math.abs(t_corner1.x - mousePos.x) <= HOVER_RANGE) {
             return isBetween(mousePos.y, t_corner1.y, t_corner2.y);
-        }else{
+        } else {
             return false;
         }
-    }else if(t_corner1.y == t_corner2.y){
-        if(Math.abs(t_corner1.y - mousePos.y) <= HOVER_RANGE){
+    } else if (t_corner1.y == t_corner2.y) {
+        if (Math.abs(t_corner1.y - mousePos.y) <= HOVER_RANGE) {
             return isBetween(mousePos.x, t_corner1.x, t_corner2.x);
-        }else{
+        } else {
             return false;
         }
-    }else{
+    } else {
         return false;
     }
 }
 
-function transformSprite( curMousePosRef){
+function transformSprite(curMousePosRef) {
     console.log(selectedObject);
     console.log(hoverBorder);
     let t_mousePos = transformPoint(curMousePosRef.x, curMousePosRef.y);
     let t_initPos = transformPoint(hover_init_pointer.x, hover_init_pointer.y);
-    switch(current_hover){
+    switch (current_hover) {
         case 0:
-            if(selectedObject.width + t_initPos.x - t_mousePos.x > 0){
+            if (selectedObject.width + t_initPos.x - t_mousePos.x > 0) {
                 selectedObject.position.x = t_mousePos.x;
                 selectedObject.width += t_initPos.x - t_mousePos.x;
                 hoverBorder.position.x = selectedObject.position.x;
                 hoverBorder.width = selectedObject.width;
                 hover_init_pointer.x = curMousePosRef.x;
             }
-            if(selectedObject.height + t_initPos.y - t_mousePos.y > 0){
+            if (selectedObject.height + t_initPos.y - t_mousePos.y > 0) {
                 selectedObject.position.y = t_mousePos.y;
                 selectedObject.height += t_initPos.y - t_mousePos.y;
                 hoverBorder.position.y = selectedObject.position.y;
@@ -409,12 +409,12 @@ function transformSprite( curMousePosRef){
             }
             break;
         case 1:
-            if(t_initPos.x - t_mousePos.x < selectedObject.width){
+            if (t_initPos.x - t_mousePos.x < selectedObject.width) {
                 selectedObject.width -= t_initPos.x - t_mousePos.x;
                 hoverBorder.width = selectedObject.width;
                 hover_init_pointer.x = curMousePosRef.x;
             }
-            if(selectedObject.height + t_initPos.y - t_mousePos.y > 0){
+            if (selectedObject.height + t_initPos.y - t_mousePos.y > 0) {
                 selectedObject.position.y = t_mousePos.y;
                 selectedObject.height += t_initPos.y - t_mousePos.y;
                 hoverBorder.position.y = selectedObject.position.y;
@@ -423,33 +423,33 @@ function transformSprite( curMousePosRef){
             }
             break;
         case 2:
-            if(t_initPos.x - t_mousePos.x < selectedObject.width){
+            if (t_initPos.x - t_mousePos.x < selectedObject.width) {
                 selectedObject.width -= t_initPos.x - t_mousePos.x;
                 hoverBorder.width = selectedObject.width;
                 hover_init_pointer.x = curMousePosRef.x;
             }
-            if( t_initPos.y - t_mousePos.y < selectedObject.height){
+            if (t_initPos.y - t_mousePos.y < selectedObject.height) {
                 selectedObject.height -= t_initPos.y - t_mousePos.y;
                 hoverBorder.height = selectedObject.height;
                 hover_init_pointer.y = curMousePosRef.y;
             }
             break;
         case 3:
-            if(selectedObject.width + t_initPos.x - t_mousePos.x > 0){
+            if (selectedObject.width + t_initPos.x - t_mousePos.x > 0) {
                 selectedObject.position.x = t_mousePos.x;
                 selectedObject.width += t_initPos.x - t_mousePos.x;
                 hoverBorder.position.x = selectedObject.position.x;
                 hoverBorder.width = selectedObject.width;
                 hover_init_pointer.x = curMousePosRef.x;
             }
-            if( t_initPos.y - t_mousePos.y < selectedObject.height){
+            if (t_initPos.y - t_mousePos.y < selectedObject.height) {
                 selectedObject.height -= t_initPos.y - t_mousePos.y;
                 hoverBorder.height = selectedObject.height;
                 hover_init_pointer.y = curMousePosRef.y;
             }
             break;
         case 4:
-            if(selectedObject.height + t_initPos.y - t_mousePos.y > 0){
+            if (selectedObject.height + t_initPos.y - t_mousePos.y > 0) {
                 selectedObject.position.y = t_mousePos.y;
                 selectedObject.height += t_initPos.y - t_mousePos.y;
                 hoverBorder.position.y = selectedObject.position.y;
@@ -458,21 +458,21 @@ function transformSprite( curMousePosRef){
             }
             break;
         case 5:
-            if(t_initPos.x - t_mousePos.x < selectedObject.width){
+            if (t_initPos.x - t_mousePos.x < selectedObject.width) {
                 selectedObject.width -= t_initPos.x - t_mousePos.x;
                 hoverBorder.width = selectedObject.width;
                 hover_init_pointer.x = curMousePosRef.x;
             }
             break;
         case 6:
-            if( t_initPos.y - t_mousePos.y < selectedObject.height){
+            if (t_initPos.y - t_mousePos.y < selectedObject.height) {
                 selectedObject.height -= t_initPos.y - t_mousePos.y;
                 hoverBorder.height = selectedObject.height;
                 hover_init_pointer.y = curMousePosRef.y;
             }
             break;
         case 7:
-            if(selectedObject.width + t_initPos.x - t_mousePos.x > 0){
+            if (selectedObject.width + t_initPos.x - t_mousePos.x > 0) {
                 selectedObject.position.x = t_mousePos.x;
                 selectedObject.width += t_initPos.x - t_mousePos.x;
                 hoverBorder.position.x = selectedObject.position.x;
@@ -494,12 +494,12 @@ function transformSprite( curMousePosRef){
 const onMouseMove = (e) => {
     const curMousePosRef = getMousePos(e);
 
-    if(currentPenType == 4 && selectedObject && last_mouse_button == 0){
-        if(isMouseButtonDown){
+    if (currentPenType == 4 && selectedObject && last_mouse_button == 0) {
+        if (isMouseButtonDown) {
             transformSprite(curMousePosRef);
-        }else{
+        } else {
             let temp_mouse = transformPoint(curMousePosRef.x, curMousePosRef.y);
-            let temp_corners = [{x:selectedObject.position.x, y:selectedObject.position.y}, {x:selectedObject.position.x + selectedObject.width, y:selectedObject.position.y}, {x:selectedObject.position.x + selectedObject.width, y:selectedObject.position.y + selectedObject.height}, {x:selectedObject.position.x, y:selectedObject.position.y + selectedObject.height}]
+            let temp_corners = [{ x: selectedObject.position.x, y: selectedObject.position.y }, { x: selectedObject.position.x + selectedObject.width, y: selectedObject.position.y }, { x: selectedObject.position.x + selectedObject.width, y: selectedObject.position.y + selectedObject.height }, { x: selectedObject.position.x, y: selectedObject.position.y + selectedObject.height }]
             selectCheck.upperLeft = checkCorner(curMousePosRef, temp_corners[0]);
             selectCheck.upperRight = checkCorner(curMousePosRef, temp_corners[1]);
             selectCheck.lowerRight = checkCorner(curMousePosRef, temp_corners[2]);
@@ -523,7 +523,7 @@ const onMouseMove = (e) => {
     // clearSpriteRef(annoRef)
     if (initPointer == null) return;
 
-    
+
     curDistance = Math.sqrt((curMousePosRef.x - mousePosRef.x) * (curMousePosRef.x - mousePosRef.x) + (curMousePosRef.y - mousePosRef.y) * (curMousePosRef.y - mousePosRef.y));
 
     /*if(last_mouse_button == 1){
@@ -539,13 +539,13 @@ const onMouseMove = (e) => {
         return;
     }*/
 
-    if(last_mouse_button == 2){
+    if (last_mouse_button == 2) {
 
         let translationOffset = { x: 0, y: 0 };
         translationOffset.x += curMousePosRef.x - initPointer.x;
         translationOffset.y += curMousePosRef.y - initPointer.y;
 
-        
+
 
         stage.position.set(stage.position.x + translationOffset.x, stage.position.y + translationOffset.y);
 
@@ -559,13 +559,13 @@ const onMouseMove = (e) => {
         return;
     }
 
-    if(currentPenType == 4){
+    if (currentPenType == 4) {
 
     }
 
 
     /// Drawing
-    
+
 
     while (putDistance <= curDistance) {
         sprite = new PIXI.Graphics();
@@ -575,7 +575,7 @@ const onMouseMove = (e) => {
         } else if (currentPenType === 1) {
             sprite.lineStyle(eraser_size, 0xffffff, 1);
         }
-        
+
         var temp_translated_pos = transformPoint(initPointer.x, initPointer.y);
 
         sprite.moveTo(temp_translated_pos.x, temp_translated_pos.y);
@@ -592,24 +592,26 @@ const onMouseMove = (e) => {
         const translate_unitDirection = {
             x: translate_direction.x / translate_length,
             y: translate_direction.y / translate_length,
-          };
+        };
 
         const translate_displacement = {
             x: translate_unitDirection.x * putDistance,
             y: translate_unitDirection.y * putDistance,
-          };
+        };
 
-        mousePosRef = { x: mousePosRef.x + translate_displacement.x,
-                        y: mousePosRef.y + translate_displacement.y,}
+        mousePosRef = {
+            x: mousePosRef.x + translate_displacement.x,
+            y: mousePosRef.y + translate_displacement.y,
+        }
 
         //********************** */
-        
+
 
         currentPoints.push(initPointer);
         pointCount += 1;
 
         //Change to look each time after a number of points are placed
-        if(pointCount % CHECK_STEPS == 0){
+        if (pointCount % CHECK_STEPS == 0) {
             //map to bezier curve
             curve = findBestFitCurve(currentPoints);
             /*
@@ -623,16 +625,16 @@ const onMouseMove = (e) => {
             }
             //curve_sprite.lineStyle(4, 0x000000, 0.5);
 
-            if(curve[0].bErr + curve[1].bErr > MAX_BERR || curve[0].mErr + curve[1].mErr > MAX_MERR){
+            if (curve[0].bErr + curve[1].bErr > MAX_BERR || curve[0].mErr + curve[1].mErr > MAX_MERR) {
 
                 const control0 = transformPoint(currentPoints[0].x, currentPoints[0].y);
                 const control1 = transformPoint(curve[0].b, curve[1].b);
                 const control2 = transformPoint(curve[0].m, curve[1].m);
-                const control3 = transformPoint(currentPoints[currentPoints.length - 1].x,  currentPoints[currentPoints.length - 1].y);
+                const control3 = transformPoint(currentPoints[currentPoints.length - 1].x, currentPoints[currentPoints.length - 1].y);
 
 
                 curve_sprite.moveTo(control0.x, control0.y);
-                curve_sprite.bezierCurveTo(control1.x, control1.y, control2.x, control2.y, control3.x,  control3.y);
+                curve_sprite.bezierCurveTo(control1.x, control1.y, control2.x, control2.y, control3.x, control3.y);
 
                 stage.addChild(curve_sprite);
                 //-------------------
@@ -694,17 +696,17 @@ const onMouseMove = (e) => {
 
                     history += mess + "\n";
                 }
-                
+
                 //delete previous drawing
                 currentSprites.forEach(element => {
                     stage.removeChild(element);
                 });
-    
+
                 currentPoints = [initPointer];
                 currentSprites = [];
                 pointCount = 1;
             }
-            
+
         }
         //*************************************** */
 
@@ -722,7 +724,7 @@ const onMouseMove = (e) => {
     /// Drawing End
 };
 
-container.oncontextmenu = function(e) { e.preventDefault(); e.stopPropagation(); }
+container.oncontextmenu = function (e) { e.preventDefault(); e.stopPropagation(); }
 
 let current_selected_object_index = 0;
 
@@ -736,9 +738,9 @@ const onMouseDown = (e) => {
         e.stopPropagation();
         last_mouse_button = 1;
         return;
-    } 
+    }
 
-    if (e.button === 2){
+    if (e.button === 2) {
         console.log("2");
         last_mouse_button = 2;
         return;
@@ -748,7 +750,7 @@ const onMouseDown = (e) => {
     last_mouse_button = 0;
 
     //console.log(currentPenType + " " + writing_on_board);
-    if(currentPenType != 2 && writing_on_board){
+    if (currentPenType != 2 && writing_on_board) {
         writing_on_board = false;
         sendTextToConn();
     }
@@ -758,8 +760,8 @@ const onMouseDown = (e) => {
         sprite.lineStyle(parseInt(pen_size), parseInt(pen_color), 1);
     } else if (currentPenType === 1) {
         sprite.lineStyle(eraser_size, 0xffffff, 1);
-    } else if (currentPenType === 2){ // Typing
-        if(writing_on_board == true){
+    } else if (currentPenType === 2) { // Typing
+        if (writing_on_board == true) {
             sendTextToConn();
         }
         console.log("Typing");
@@ -784,13 +786,13 @@ const onMouseDown = (e) => {
 
         stage.addChild(p_text);
         writing_on_board = true;
-    } else if(currentPenType === 3){
-        if(have_file){
+    } else if (currentPenType === 3) {
+        if (have_file) {
 
             have_file = false;
 
             image_texture = PIXI.Texture.from(current_image);
-    
+
             const sprite = new PIXI.Sprite(image_texture);
 
             interactibleObjects.push(sprite);
@@ -800,14 +802,14 @@ const onMouseDown = (e) => {
 
             sprite.x = relativePos.x;
             sprite.y = relativePos.y;
-            
+
             stage.addChild(sprite);
 
 
             const mess = currentPenType +
                 "|" +
                 currentZIndex +
-                "|" + 
+                "|" +
                 current_image +
                 "|" +
                 relativePos.x +
@@ -822,8 +824,8 @@ const onMouseDown = (e) => {
 
 
         }
-    } else if(currentPenType == 4){ //Select Tool
-        if(hoverSelectedObject()){
+    } else if (currentPenType == 4) { //Select Tool
+        if (hoverSelectedObject()) {
             hover_init_pointer = mousePosRef;
             //console.log(current_hover);
             return;
@@ -838,15 +840,15 @@ const onMouseDown = (e) => {
         selectedObject = null;
         current_selected_object_index = -1;
 
-        for(let i = interactibleObjects.length - 1; i >= 0; i--){
-            if(SelectCheck(space_map.x, space_map.y, interactibleObjects[i].position.x, interactibleObjects[i].position.y, interactibleObjects[i].position.x + interactibleObjects[i].width, interactibleObjects[i].position.y + interactibleObjects[i].height)){
+        for (let i = interactibleObjects.length - 1; i >= 0; i--) {
+            if (SelectCheck(space_map.x, space_map.y, interactibleObjects[i].position.x, interactibleObjects[i].position.y, interactibleObjects[i].position.x + interactibleObjects[i].width, interactibleObjects[i].position.y + interactibleObjects[i].height)) {
                 selectedObject = interactibleObjects[i];
                 current_selected_object_index = i;
                 i = -1;
             }
         }
 
-        if(selectedObject){
+        if (selectedObject) {
             console.log("returned");
 
             // Create a Graphics object
@@ -868,49 +870,49 @@ const onMouseDown = (e) => {
             stage.addChild(hoverBorder);
             //selectedObject.tint = 0xff0000;
         }
-        
+
     }
     //sprite.moveTo(initPointer.x, initPointer.y);
     //sprite.lineTo(mousePosRef.x, mousePosRef.y);
 
     //stage.addChild(sprite);
 
-    
+
 
     //console.log(mousePosRef);
 };
 
 let hover_init_pointer = null;
 
-let current_hover = -1; 
+let current_hover = -1;
 
-function hoverSelectedObject(){
+function hoverSelectedObject() {
     //console.log(selectCheck);
-    if(selectCheck.upperLeft){
+    if (selectCheck.upperLeft) {
         current_hover = 0;
         return true;
-    }else if(selectCheck.upperRight){
+    } else if (selectCheck.upperRight) {
         current_hover = 1;
         return true;
-    }else if(selectCheck.lowerRight){
+    } else if (selectCheck.lowerRight) {
         current_hover = 2;
         return true;
-    }else if(selectCheck.lowerLeft){
+    } else if (selectCheck.lowerLeft) {
         current_hover = 3;
         return true;
-    }else if(selectCheck.up){
+    } else if (selectCheck.up) {
         current_hover = 4;
         return true;
-    }else if(selectCheck.right){
+    } else if (selectCheck.right) {
         current_hover = 5;
         return true;
-    }else if(selectCheck.down){
+    } else if (selectCheck.down) {
         current_hover = 6;
         return true;
-    }else if(selectCheck.left){
+    } else if (selectCheck.left) {
         current_hover = 7;
         return true;
-    }else if(selectCheck.on){
+    } else if (selectCheck.on) {
         current_hover = 8;
         return true;
     }
@@ -923,25 +925,25 @@ function hoverSelectedObject(){
 const onMouseUp = (e) => {
     isMouseButtonDown = false;
 
-    if(currentPenType == 4 && current_hover >= 0){
+    if (currentPenType == 4 && current_hover >= 0) {
         const mess = currentPenType +
-                "|" +
-                current_selected_object_index + // Object Number
-                "|" +
-                selectedObject.position.x + // x
-                "|" +
-                selectedObject.position.y + // y
-                "|" +
-                selectedObject.width + // width
-                "|" +
-                selectedObject.height;// height
-            conn.send(
-                mess
-            );
-            history += mess + "\n";
+            "|" +
+            current_selected_object_index + // Object Number
+            "|" +
+            selectedObject.position.x + // x
+            "|" +
+            selectedObject.position.y + // y
+            "|" +
+            selectedObject.width + // width
+            "|" +
+            selectedObject.height;// height
+        conn.send(
+            mess
+        );
+        history += mess + "\n";
     }
 
-    if(pointCount > 0){
+    if (pointCount > 0) {
         //map to bezier curve
         curve = findBestFitCurve(currentPoints);
         /*
@@ -958,10 +960,10 @@ const onMouseUp = (e) => {
         const control0 = transformPoint(currentPoints[0].x, currentPoints[0].y);
         const control1 = transformPoint(curve[0].b, curve[1].b);
         const control2 = transformPoint(curve[0].m, curve[1].m);
-        const control3 = transformPoint(currentPoints[currentPoints.length - 1].x,  currentPoints[currentPoints.length - 1].y);
+        const control3 = transformPoint(currentPoints[currentPoints.length - 1].x, currentPoints[currentPoints.length - 1].y);
 
         curve_sprite.moveTo(control0.x, control0.y);
-        curve_sprite.bezierCurveTo(control1.x, control1.y, control2.x, control2.y, control3.x,  control3.y);
+        curve_sprite.bezierCurveTo(control1.x, control1.y, control2.x, control2.y, control3.x, control3.y);
 
         stage.addChild(curve_sprite);
         //-------------------
@@ -1023,7 +1025,7 @@ const onMouseUp = (e) => {
 
             history += mess + "\n";
         }
-        
+
         //delete previous drawing
         currentSprites.forEach(element => {
             stage.removeChild(element);
@@ -1034,34 +1036,34 @@ const onMouseUp = (e) => {
         currentSprites = [];
     }
 };
-     
+
 document.addEventListener("keydown", (event) => {
-    if(writing_on_board){
+    if (writing_on_board) {
         const alphanumericKey = /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/.test(event.key);
         //console.log(event.key);
-        if(event.key.localeCompare("Enter") === 0){
+        if (event.key.localeCompare("Enter") === 0) {
             //Send Text
             sendTextToConn();
 
             writing_on_board = false;
         }
-        else if(alphanumericKey && event.key.length === 1){
-            if(cursor_added){
+        else if (alphanumericKey && event.key.length === 1) {
+            if (cursor_added) {
                 removeCursor();
             }
             p_text.text += event.key;
-        }else if(event.key.localeCompare(" ") === 0){
-            if(cursor_added){
+        } else if (event.key.localeCompare(" ") === 0) {
+            if (cursor_added) {
                 removeCursor();
             }
             p_text.text += " ";
         }
     }
-    
+
 });
 
 
-  function minimizeLoss(points){
+function minimizeLoss(points) {
     let P0 = points[0];
     let P3 = points[points.length - 1];
     let X = [];
@@ -1069,28 +1071,28 @@ document.addEventListener("keydown", (event) => {
     let Yy = [];
     let delta = 1 / points.length;
     let t = delta;
-    for (let i = 1; i < points.length - 1; i++){
-        X.push(t/(1-t));
-        Yx.push((points[i].x - (1-t) * (1-t) * (1-t) * P0.x - t * t * t * P3.x)/(3 * (1-t) * (1-t) * t));
-        Yy.push((points[i].y - (1-t) * (1-t) * (1-t) * P0.y - t * t * t * P3.y)/(3 * (1-t) * (1-t) * t));
-        t+=delta;
+    for (let i = 1; i < points.length - 1; i++) {
+        X.push(t / (1 - t));
+        Yx.push((points[i].x - (1 - t) * (1 - t) * (1 - t) * P0.x - t * t * t * P3.x) / (3 * (1 - t) * (1 - t) * t));
+        Yy.push((points[i].y - (1 - t) * (1 - t) * (1 - t) * P0.y - t * t * t * P3.y) / (3 * (1 - t) * (1 - t) * t));
+        t += delta;
     }
 
     let Xlsq = {};
     let Ylsq = {};
 
-    lsq(X,Yx, true, Xlsq);
+    lsq(X, Yx, true, Xlsq);
     lsq(X, Yy, true, Ylsq);
 
     return [Xlsq, Ylsq];
-  }
+}
 
-  function findBestFitCurve(points) {
+function findBestFitCurve(points) {
     const result = minimizeLoss(points);
     return result;
 }
 
-  //End of Bezier Curve Functions
+//End of Bezier Curve Functions
 
 container.addEventListener("mousemove", onMouseMove, 0);
 
@@ -1106,7 +1108,7 @@ container.addEventListener("mouseup", onMouseUp, 0);
     Solve not rendering text problem
 */
 
-let pdf ; // to store pdf data 
+let pdf; // to store pdf data 
 let pdf_canvas; // to render pdf
 let isPageRendering; // to check if the pdf is currently rendering
 let pageRenderingQueue = null; // to store next page number to render
@@ -1117,8 +1119,8 @@ let currentPageNum = 1;
 
 
 
-export function receivePdf(decodedMess){
-    isPageRendering= false;
+export function receivePdf(decodedMess) {
+    isPageRendering = false;
     pageRenderingQueue = null;
     pdf_canvas = document.getElementById('pdf_canvas');
     canvasContext = pdf_canvas.getContext('2d');
@@ -1127,17 +1129,17 @@ export function receivePdf(decodedMess){
     initPDFRendererReceive(decodedMess);
 }
 
-document.getElementById('pdf-input').addEventListener('change', function(event) {
+document.getElementById('pdf-input').addEventListener('change', function (event) {
 
-    isPageRendering= false;
+    isPageRendering = false;
     pageRenderingQueue = null;
     pdf_canvas = document.getElementById('pdf_canvas');
     canvasContext = pdf_canvas.getContext('2d');
-    
+
     initEvents(); //Add events
     initPDFRenderer(event); // render first page
 
-  });
+});
 
 function initPDFRendererReceive(decodedMess) {
 
@@ -1151,19 +1153,19 @@ function initPDFRendererReceive(decodedMess) {
 
     pdfjsLib.getDocument(fileArrayBuffer)
         .promise
-        .then( pdfData => {
-                totalPages = pdfData.numPages; // total number of pages 
-                let pagesCounter= document.getElementById('total_page_num'); // update total pages text
-                pagesCounter.textContent = totalPages;
-                // assigning read pdfContent to global variable
-                pdf = pdfData;
-                console.log(pdfData);
-                renderPage(currentPageNum);
+        .then(pdfData => {
+            totalPages = pdfData.numPages; // total number of pages 
+            let pagesCounter = document.getElementById('total_page_num'); // update total pages text
+            pagesCounter.textContent = totalPages;
+            // assigning read pdfContent to global variable
+            pdf = pdfData;
+            console.log(pdfData);
+            renderPage(currentPageNum);
         });
 
 
 
-    
+
 }
 
 function initPDFRenderer(event) {
@@ -1175,7 +1177,7 @@ function initPDFRenderer(event) {
     // Create a new FileReader instance
     const reader = new FileReader();
 
-    reader.onload = function() {
+    reader.onload = function () {
         const fileArrayBuffer = reader.result;
 
         var typedarray = new Uint8Array(reader.result);
@@ -1189,21 +1191,21 @@ function initPDFRenderer(event) {
 
         pdfjsLib.getDocument(fileArrayBuffer)
             .promise
-            .then( pdfData => {
-                    totalPages = pdfData.numPages; // total number of pages 
-                    let pagesCounter= document.getElementById('total_page_num'); // update total pages text
-                    pagesCounter.textContent = totalPages;
-                    // assigning read pdfContent to global variable
-                    pdf = pdfData;
-                    console.log(pdfData);
-                    renderPage(currentPageNum);
+            .then(pdfData => {
+                totalPages = pdfData.numPages; // total number of pages 
+                let pagesCounter = document.getElementById('total_page_num'); // update total pages text
+                pagesCounter.textContent = totalPages;
+                // assigning read pdfContent to global variable
+                pdf = pdfData;
+                console.log(pdfData);
+                renderPage(currentPageNum);
             });
 
-      };
+    };
 
     reader.readAsArrayBuffer(file);
 
-    
+
 }
 
 function initEvents() {
@@ -1211,39 +1213,39 @@ function initEvents() {
     let nextPageBtn = document.getElementById('next_page');
     let goToPage = document.getElementById('go_to_page');
     prevPageBtn.addEventListener('click', renderPreviousPage);
-    nextPageBtn.addEventListener('click',renderNextPage);
+    nextPageBtn.addEventListener('click', renderNextPage);
     goToPage.addEventListener('click', goToPageNum);
 }
 
 function renderPage(pageNumToRender = 1) {
-    isPageRendering = true; 
+    isPageRendering = true;
     document.getElementById('current_page_num').textContent = pageNumToRender;
     // use getPage method
-    
+
     pdf
         .getPage(pageNumToRender)
-        .then( page => {
-        const viewport = page.getViewport({scale :1});
-        pdf_canvas.height = viewport.height;
-        pdf_canvas.width = viewport.width;  
-        let renderCtx = {canvasContext ,viewport};
-        
-        page
-            .render(renderCtx)
-            .promise
-            .then(()=> {
-            isPageRendering = false;
-            // this is to check if there is next page to be rendered in the queue
-            if(pageRenderingQueue !== null) { 
-                renderPage(pageRenderingQueue);
-                pageRenderingQueue = null; 
-            }
+        .then(page => {
+            const viewport = page.getViewport({ scale: 1 });
+            pdf_canvas.height = viewport.height;
+            pdf_canvas.width = viewport.width;
+            let renderCtx = { canvasContext, viewport };
+
+            page
+                .render(renderCtx)
+                .promise
+                .then(() => {
+                    isPageRendering = false;
+                    // this is to check if there is next page to be rendered in the queue
+                    if (pageRenderingQueue !== null) {
+                        renderPage(pageRenderingQueue);
+                        pageRenderingQueue = null;
+                    }
+                });
         });
-    }); 
 }
 
 function renderPageQueue(pageNum) {
-    if(pageRenderingQueue != null) {
+    if (pageRenderingQueue != null) {
         pageRenderingQueue = pageNum;
     } else {
         renderPage(pageNum);
@@ -1251,17 +1253,17 @@ function renderPageQueue(pageNum) {
 }
 
 function renderNextPage(ev) {
-    
-    if(currentPageNum >= totalPages) {
+
+    if (currentPageNum >= totalPages) {
         alert("This is the last page");
-        return ;
-    } 
+        return;
+    }
     currentPageNum++;
 
     //Send Page info
     const mess = "-2" +
-       "|" +
-       currentPageNum;
+        "|" +
+        currentPageNum;
     conn.send(
         mess
     );
@@ -1269,16 +1271,16 @@ function renderNextPage(ev) {
     renderPageQueue(currentPageNum);
 }
 function renderPreviousPage(ev) {
-    if(currentPageNum<=1) {
+    if (currentPageNum <= 1) {
         alert("This is the first page");
-        return ;
+        return;
     }
     currentPageNum--;
 
-        //Send Page info
+    //Send Page info
     const mess = "-2" +
-       "|" +
-       currentPageNum;
+        "|" +
+        currentPageNum;
     conn.send(
         mess
     );
@@ -1292,8 +1294,8 @@ function goToPageNum(ev) {
 
     //Send Page info
     const mess = "-2" +
-       "|" +
-       pageNumber;
+        "|" +
+        pageNumber;
     conn.send(
         mess
     );
@@ -1301,14 +1303,14 @@ function goToPageNum(ev) {
     goToPageHelper(pageNumber);
 }
 
-export function goToPageHelper(pageNumber){
+export function goToPageHelper(pageNumber) {
     let numberInput = document.getElementById('page_num');
-    if(pageNumber) {
-        if(pageNumber <= totalPages && pageNumber >= 1){
+    if (pageNumber) {
+        if (pageNumber <= totalPages && pageNumber >= 1) {
             currentPageNum = pageNumber;
-            numberInput.value ="";
+            numberInput.value = "";
             renderPageQueue(pageNumber);
-            return ;
+            return;
         }
     }
     alert("Enter a valide page numer");
@@ -1340,10 +1342,10 @@ const resetWhiteboard = () => {
 document.resetWhiteboard = resetWhiteboard;
 
 //Select Check
-function SelectCheck(mouseX, mouseY, leftUpX, leftUpY, rightDownX, rightDownY){
+function SelectCheck(mouseX, mouseY, leftUpX, leftUpY, rightDownX, rightDownY) {
     //console.log(mouseX + " " + mouseY+ " " + leftUpX+ " " + leftUpY+ " " + rightDownX+ " " + rightDownY)
 
-    if(mouseX <= rightDownX && mouseX >= leftUpX && mouseY >= leftUpY && mouseY <= rightDownY){
+    if (mouseX <= rightDownX && mouseX >= leftUpX && mouseY >= leftUpY && mouseY <= rightDownY) {
         return true;
     }
     return false;
@@ -1355,13 +1357,13 @@ let cursor_added = false;
 function addCursor() {
     cursor_added = true;
     p_text.text += "|";
-  }
-  
-  // Remove '|' character from text
-  function removeCursor() {
+}
+
+// Remove '|' character from text
+function removeCursor() {
     cursor_added = false;
     p_text.text = p_text.text.slice(0, -1);
-  }
+}
 
 let curTime = 0;
 const CURSOR_TICK_TIME = 250;
@@ -1370,23 +1372,136 @@ const CURSOR_TICK_TIME = 250;
 // Use PIXI's ticker to update the text every frame
 app.ticker.add(() => {
     curTime += PIXI.Ticker.shared.elapsedMS;
-    if(curTime < CURSOR_TICK_TIME){
+    if (curTime < CURSOR_TICK_TIME) {
         return;
     }
     curTime -= CURSOR_TICK_TIME;
-    
-    if (writing_on_board || cursor_added) {
-      if (!cursor_added) {
-        
-        // Add '|' character
-        addCursor();
-  
-      }
-      else{
-        
-        // Add '|' character
-        removeCursor();
 
-      }
+    if (writing_on_board || cursor_added) {
+        if (!cursor_added) {
+
+            // Add '|' character
+            addCursor();
+
+        }
+        else {
+
+            // Add '|' character
+            removeCursor();
+
+        }
     }
-  });
+});
+
+// whiteboard related data handling
+export function handleWhiteboardData(data) {
+
+    let splittedMessage = data.split("|");
+
+    let tempPenType = parseInt(splittedMessage[0]);
+    setCurrentZIndex(parseInt(splittedMessage[1]));
+
+    if (tempPenType >= 0) {
+
+        setHistory(history + data + "\n");
+    }
+
+    if (tempPenType == 0) { // Pen
+        let initX = parseFloat(splittedMessage[2]);
+        let initY = parseFloat(splittedMessage[3]);
+        let control1x = parseFloat(splittedMessage[4]);
+        let control1y = parseFloat(splittedMessage[5]);
+        let control2x = parseFloat(splittedMessage[6]);
+        let control2y = parseFloat(splittedMessage[7]);
+        let finalX = parseFloat(splittedMessage[8]);
+        let finalY = parseFloat(splittedMessage[9]);
+        let tempPenSize = parseInt(splittedMessage[10]);
+        let tempPenColor = parseInt(splittedMessage[11]);
+
+        let tempSprite = new PIXI.Graphics();
+
+        tempSprite.lineStyle(tempPenSize, tempPenColor, 1);
+
+        tempSprite.zIndex = currentZIndex;
+        tempSprite.moveTo(initX, initY);
+        tempSprite.bezierCurveTo(control1x, control1y, control2x, control2y, finalX, finalY);
+
+        stage.addChild(tempSprite);
+    } else if (tempPenType == 1) { // Eraser
+        let initX = parseFloat(splittedMessage[2]);
+        let initY = parseFloat(splittedMessage[3]);
+        let control1x = parseFloat(splittedMessage[4]);
+        let control1y = parseFloat(splittedMessage[5]);
+        let control2x = parseFloat(splittedMessage[6]);
+        let control2y = parseFloat(splittedMessage[7]);
+        let finalX = parseFloat(splittedMessage[8]);
+        let finalY = parseFloat(splittedMessage[9]);
+        let tempEraserSize = parseInt(splittedMessage[10]);
+
+        let tempSprite = new PIXI.Graphics();
+
+        tempSprite.lineStyle(tempEraserSize, 0xffffff, 1);
+
+        tempSprite.zIndex = currentZIndex;
+        tempSprite.moveTo(initX, initY);
+        tempSprite.bezierCurveTo(control1x, control1y, control2x, control2y, finalX, finalY);
+
+        stage.addChild(tempSprite);
+    } else if (tempPenType == 2) { // Typing
+        let tempTextSize = parseInt(splittedMessage[2]);
+        let tempTextColor = parseInt(splittedMessage[3]);
+        let tempText = splittedMessage[4];
+        let tempX = parseFloat(splittedMessage[5]);
+        let tempY = parseFloat(splittedMessage[6]);
+
+        let tempStyle = new PIXI.TextStyle({
+            fontFamily: "Arial",
+            fontSize: tempTextSize,
+            fill: tempTextColor,
+        });
+
+        let tempPText = new PIXI.Text(tempText, tempStyle);
+        tempPText.zIndex = currentZIndex;
+        tempPText.x = tempX;
+        tempPText.y = tempY;
+
+        interactibleObjects.push(tempPText);
+        stage.addChild(tempPText);
+    } else if (tempPenType == 3) {
+        let temp_image = splittedMessage[2];
+        let tempX = parseFloat(splittedMessage[3]);
+        let tempY = parseFloat(splittedMessage[4]);
+
+        const image_texture = PIXI.Texture.from(temp_image);
+        const sprite = new PIXI.Sprite(image_texture);
+
+        sprite.x = tempX;
+        sprite.y = tempY;
+
+        interactibleObjects.push(sprite);
+        stage.addChild(sprite);
+    } else if (tempPenType == 4) {
+        let temp_obj_index = parseInt(splittedMessage[1]);
+        let tempX = parseFloat(splittedMessage[2]);
+        let tempY = parseFloat(splittedMessage[3]);
+        let tempWidth = parseFloat(splittedMessage[4]);
+        let tempHeight = parseFloat(splittedMessage[5]);
+
+        interactibleObjects[temp_obj_index].position.x = tempX;
+        interactibleObjects[temp_obj_index].position.y = tempY;
+        interactibleObjects[temp_obj_index].width = tempWidth;
+        interactibleObjects[temp_obj_index].height = tempHeight;
+
+    } else if (tempPenType == -1) {
+        changeInteractiveTool(1);
+
+        receivePdf(splittedMessage[1]);
+
+    } else if (tempPenType == -2) {
+        //While not looking pdf rendering does not work correctly
+        goToPageHelper(parseInt(splittedMessage[1]));
+    } else if (tempPenType == -3) {
+        stage.removeChildren();
+    }
+
+}
