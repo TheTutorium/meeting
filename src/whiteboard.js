@@ -1397,7 +1397,7 @@ const shotImage = () => {
     console.log(current_image);
     changePenType(3);
     have_file = true;
-    changeInteractiveTool(0);
+    whiteboardClicked();
 
 }
 
