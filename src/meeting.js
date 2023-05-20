@@ -11,6 +11,11 @@ let autoConnect = false;
 let connectInterval;
 let isOtherUserSharingScreen = false;
 
+let microphoneOn = true;
+let videoOn = true;
+export let streamSenderVideo = null;
+export let streamSenderAudio = null;
+
 let myPeerId = null;
 let connectToPeerId = null;
 
@@ -119,6 +124,81 @@ function handleDisconnect() {
   }
 }
 
+// Function to mute the user's microphone and mute the stream that is sent to the remote peer
+export const toggleMicrophoneOrVideo = (microphoneToggle, videoToggle) => {
+  if (microphoneToggle) {
+    microphoneOn = !microphoneOn;
+    // Change the microphone icon
+    if (microphoneOn) {
+      document.getElementById('toggle-microphone-icon').className = 'microphone icon';
+    }
+    else {
+      document.getElementById('toggle-microphone-icon').className = 'microphone slash icon';
+    }
+  }
+  if (videoToggle) {
+    videoOn = !videoOn;
+    // Change the video icon
+    if (videoOn) {
+      document.getElementById('toggle-video-icon').className = 'video icon';
+    }
+    else {
+      document.getElementById('toggle-video-icon').className = 'video slash icon';
+    }
+  }
+
+  // If both video and microphone are off, send black screen with no audio to the remote peer
+  if (!videoOn && !microphoneOn) {
+
+    const blackStream = new MediaStream(); // Create a new MediaStream
+
+    // Create a black video track with the same dimensions as the original video track
+    const blackVideoTrack = document.createElement('canvas').captureStream().getVideoTracks()[0];
+    blackVideoTrack.enabled = false; // Disable the black video track
+    localStream = blackStream;
+    localVideo.srcObject = blackStream;
+
+    streamSenderVideo.replaceTrack(null);
+    streamSenderAudio.replaceTrack(null);
+    return;
+  }
+
+  // set remote stream
+  navigator.mediaDevices.getUserMedia({ video: videoOn, audio: microphoneOn })
+    .then(stream => {
+      // replace the sender track with the new track
+      streamSenderVideo.replaceTrack(stream.getVideoTracks()[0]);
+      streamSenderAudio.replaceTrack(stream.getAudioTracks()[0]);
+    })
+    .catch(error => {
+      console.error('Error accessing media devices:', error);
+    });
+
+
+  // set local stream
+  if (!videoOn) {
+    const blackStream = new MediaStream(); // Create a new MediaStream
+
+    // Create a black video track with the same dimensions as the original video track
+    const blackVideoTrack = document.createElement('canvas').captureStream().getVideoTracks()[0];
+    blackVideoTrack.enabled = false; // Disable the black video track
+    localStream = blackStream;
+    localVideo.srcObject = blackStream;
+    return;
+  }
+  else {
+    navigator.mediaDevices.getUserMedia({ video: videoOn, audio: false })
+      .then(stream => {
+        localStream = stream;
+        localVideo.srcObject = stream;
+      })
+      .catch(error => {
+        console.error('Error accessing media devices:', error);
+      });
+  }
+}
+window.toggleMicrophoneOrVideo = toggleMicrophoneOrVideo;
+
 // Function to enable the connection after a disconnection
 function enableConnection() {
   disconnectButton.disabled = true; // Disable the "Disconnect" button
@@ -131,6 +211,8 @@ function startVideoCall() {
     .then(stream => {
       currentCall = peer.call(connectToPeerId, stream); // Initiate the call with the remote peer
       currentCall.on('stream', handleStream); // Event listener for the incoming stream
+      streamSenderVideo = currentCall.peerConnection.getSenders().find((s) => s.track.kind === stream.getVideoTracks()[0].kind);
+      streamSenderAudio = currentCall.peerConnection.getSenders().find((s) => s.track.kind === stream.getAudioTracks()[0].kind);
     })
     .catch(error => {
       console.error('Error accessing media devices:', error);
@@ -171,7 +253,7 @@ function handleData(data) {
     conn.close(); // Close the connection
     connectButton.disabled = false; // Enable the "Connect" button
     isConnecting = false;
-  } else if (data=== '|share-screen-start') {
+  } else if (data === '|share-screen-start') {
     isOtherUserSharingScreen = true;
   } else if (data === '|share-screen-stop') {
     isOtherUserSharingScreen = false;
@@ -231,6 +313,8 @@ peer.on('call', call => {
     .then((stream) => {
       call.answer(stream); // Answer the call with an A/V stream.
       call.on("stream", handleStream);
+      streamSenderVideo = currentCall.peerConnection.getSenders().find((s) => s.track.kind === stream.getVideoTracks()[0].kind);
+      streamSenderAudio = currentCall.peerConnection.getSenders().find((s) => s.track.kind === stream.getAudioTracks()[0].kind);
     })
     .catch((err) => {
       console.error("Failed to get local stream", err);
