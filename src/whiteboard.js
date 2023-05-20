@@ -1457,7 +1457,7 @@ const shotImage = () => {
     changePenType(3);
     have_file = true;
     changeCursor("image-add-cursor");
-    changeInteractiveTool(0);
+    whiteboardClicked();
 
 }
 
