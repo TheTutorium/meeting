@@ -132,7 +132,7 @@ const textColorSelect = document.getElementById("text-color");
 const app = new PIXI.Application({
     antialias: true,
     background: "#ffffff",
-    width: window.innerWidth * 0.4,
+    width: window.innerWidth * 0.5,
     height: window.innerHeight * 0.5,
 });
 
@@ -222,22 +222,7 @@ function onCanvasScroll(event) {
     stage.position.set(-canvas_translation.x, -canvas_translation.y);
 
 
-    /*var newMiddlePoint = transformPoint(0,0);
-
-    var temp_dist = {x: middlePoint.x - newMiddlePoint.x, y: middlePoint.y - newMiddlePoint.y};
-
-    stage.position.set(stage.position.x + (temp_dist.x / canvas_scale), stage.position.y + (temp_dist.y / canvas_scale));
-
-    canvas_translation = {x: canvas_translation.x + (temp_dist.x / canvas_scale), y: canvas_translation.y + (temp_dist.y / canvas_scale)};*/
-
 }
-
-
-/*const whiteboard = new PIXI.Graphics();
-whiteboard.beginFill(0xffffff);
-whiteboard.drawRect(0, 0, 800, 600);
-whiteboard.endFill();
-stage.addChild(whiteboard);*/
 
 var sprite = new PIXI.Graphics();
 
@@ -258,6 +243,7 @@ let currentInteractiveTool = 0;
 
 export const changeInteractiveTool = (tool) => {
 
+    console.log(tool + " prev " + currentInteractiveTool);
 
     const prevTools = document.querySelector(`#interactive-${currentInteractiveTool}`);
     prevTools.classList.add('hidden');
@@ -276,7 +262,94 @@ export const changeInteractiveTool = (tool) => {
 
 };
 
+const penButton = document.getElementById('tool-button-0');
+const eraserButton = document.getElementById('tool-button-1');
+const textButton = document.getElementById('tool-button-2');
+const uploadImgButton = document.getElementById('tool-button-3');
+const selectButton = document.getElementById('tool-button-4');
+const resetButton = document.getElementById('reset-button');
+const downloadButton = document.getElementById('save-button');
+const leftButton = document.getElementById('prev_page');
+const pageField = document.getElementById('page_input');
+const rightButton = document.getElementById('next_page');
+const uploadPdfButton = document.getElementById('upload-pdf');
+const edditButton = document.getElementById('pdf-tool-button-0');
+
+export const twoVideoClicked = () => {
+
+    if(currentInteractiveTool == -1){
+        return;
+    }
+
+    conn.send("-4|-1");
+    currentInteractiveTool = -1;
+    
+
+    console.log("in two video");
+};
+
+const whiteboardClicked = () => {
+    if(currentInteractiveTool == 0){
+        return;
+    }
+        
+    conn.send("-4|0");
+
+    changeInteractiveTool(0);
+    
+    penButton.classList.remove('hidden');
+    eraserButton.classList.remove('hidden');
+    textButton.classList.remove('hidden');
+    uploadImgButton.classList.remove('hidden');
+    selectButton.classList.remove('hidden');
+    resetButton.classList.remove('hidden');
+    downloadButton.classList.remove('hidden');
+
+    leftButton.classList.add('hidden');
+    pageField.classList.add('hidden');
+    rightButton.classList.add('hidden');
+    uploadPdfButton.classList.add('hidden');
+    edditButton.classList.add('hidden');
+};
+const pdfviewClicked = () => {
+    if(currentInteractiveTool == 1){
+        return;
+    }
+
+    conn.send("-4|1");
+
+    changeInteractiveTool(1);
+
+    penButton.classList.add('hidden');
+    eraserButton.classList.add('hidden');
+    textButton.classList.add('hidden');
+    uploadImgButton.classList.add('hidden');
+    selectButton.classList.add('hidden');
+    resetButton.classList.add('hidden');
+    downloadButton.classList.add('hidden');
+
+    leftButton.classList.remove('hidden');
+    pageField.classList.remove('hidden');
+    rightButton.classList.remove('hidden');
+    uploadPdfButton.classList.remove('hidden');
+    edditButton.classList.remove('hidden');
+};
+export const screenShareClicked = () => {
+    if(currentInteractiveTool == 2){
+        return;
+    }
+
+    conn.send("-4|2");
+    currentInteractiveTool = 2;
+
+    console.log("in screen share");
+};
+
+
 window.changeInteractiveTool = changeInteractiveTool;
+window.whiteboardClicked = whiteboardClicked;
+window.pdfviewClicked = pdfviewClicked;
+
 
 // Whiteboard Part
 
@@ -350,7 +423,7 @@ export function setCanvasElements(newValue) {
     canvasElements = newValue;
 }
 
-const HOVER_RANGE = 10;
+const HOVER_RANGE = 3;
 
 function checkCorner(mousePos, corner) {
     const t_corner = reverseTransformPoint(corner.x, corner.y);
@@ -490,6 +563,8 @@ function transformSprite(curMousePosRef) {
         default:
     }
 }
+
+
 
 const onMouseMove = (e) => {
     const curMousePosRef = getMousePos(e);
@@ -1101,11 +1176,14 @@ container.addEventListener("mousedown", onMouseDown, 0);
 container.addEventListener("mouseup", onMouseUp, 0);
 
 
+//Mouse Cursor Change
+
+//canvas.classList.add('pen-cursor');
+
 //PDF Share
 
 /*IMPORTANT NOTES!!!!!!!!!!!!!!!!!!!
     Make pdfs fit to page
-    Solve not rendering text problem
 */
 
 let pdf; // to store pdf data 
@@ -1153,14 +1231,12 @@ function initPDFRendererReceive(decodedMess) {
 
     pdfjsLib.getDocument(fileArrayBuffer)
         .promise
-        .then(pdfData => {
-            totalPages = pdfData.numPages; // total number of pages 
-            let pagesCounter = document.getElementById('total_page_num'); // update total pages text
-            pagesCounter.textContent = totalPages;
-            // assigning read pdfContent to global variable
-            pdf = pdfData;
-            console.log(pdfData);
-            renderPage(currentPageNum);
+        .then( pdfData => {
+                totalPages = pdfData.numPages; // total number of pages 
+                // assigning read pdfContent to global variable
+                pdf = pdfData;
+                console.log(pdfData);
+                renderPage(currentPageNum);
         });
 
 
@@ -1191,14 +1267,12 @@ function initPDFRenderer(event) {
 
         pdfjsLib.getDocument(fileArrayBuffer)
             .promise
-            .then(pdfData => {
-                totalPages = pdfData.numPages; // total number of pages 
-                let pagesCounter = document.getElementById('total_page_num'); // update total pages text
-                pagesCounter.textContent = totalPages;
-                // assigning read pdfContent to global variable
-                pdf = pdfData;
-                console.log(pdfData);
-                renderPage(currentPageNum);
+            .then( pdfData => {
+                    totalPages = pdfData.numPages; // total number of pages 
+                    // assigning read pdfContent to global variable
+                    pdf = pdfData;
+                    console.log(pdfData);
+                    renderPage(currentPageNum);
             });
 
     };
@@ -1211,15 +1285,15 @@ function initPDFRenderer(event) {
 function initEvents() {
     let prevPageBtn = document.getElementById('prev_page');
     let nextPageBtn = document.getElementById('next_page');
-    let goToPage = document.getElementById('go_to_page');
+    let goToPage = document.getElementById('page_input_text');
     prevPageBtn.addEventListener('click', renderPreviousPage);
-    nextPageBtn.addEventListener('click', renderNextPage);
-    goToPage.addEventListener('click', goToPageNum);
+    nextPageBtn.addEventListener('click',renderNextPage);
+    goToPage.addEventListener('change', goToPageNum);
 }
 
 function renderPage(pageNumToRender = 1) {
-    isPageRendering = true;
-    document.getElementById('current_page_num').textContent = pageNumToRender;
+    isPageRendering = true; 
+    document.getElementById('page_input_text').placeholder  = pageNumToRender + "/" + totalPages;
     // use getPage method
 
     pdf
@@ -1289,7 +1363,7 @@ function renderPreviousPage(ev) {
 }
 
 function goToPageNum(ev) {
-    let numberInput = document.getElementById('page_num');
+    let numberInput = document.getElementById('page_input_text');
     let pageNumber = parseInt(numberInput.value);
 
     //Send Page info
@@ -1303,10 +1377,10 @@ function goToPageNum(ev) {
     goToPageHelper(pageNumber);
 }
 
-export function goToPageHelper(pageNumber) {
-    let numberInput = document.getElementById('page_num');
-    if (pageNumber) {
-        if (pageNumber <= totalPages && pageNumber >= 1) {
+export function goToPageHelper(pageNumber){
+    let numberInput = document.getElementById('page_input_text');
+    if(pageNumber) {
+        if(pageNumber <= totalPages && pageNumber >= 1){
             currentPageNum = pageNumber;
             numberInput.value = "";
             renderPageQueue(pageNumber);
@@ -1317,7 +1391,6 @@ export function goToPageHelper(pageNumber) {
 }
 
 
-/** IMPORTANT: This only takes screenshot of first page */
 const shotImage = () => {
     // Get the iframe element
     current_image = pdf_canvas.toDataURL();
@@ -1493,7 +1566,7 @@ export function handleWhiteboardData(data) {
         interactibleObjects[temp_obj_index].height = tempHeight;
 
     } else if (tempPenType == -1) {
-        changeInteractiveTool(1);
+        pdfviewClicked();
 
         receivePdf(splittedMessage[1]);
 
@@ -1502,6 +1575,24 @@ export function handleWhiteboardData(data) {
         goToPageHelper(parseInt(splittedMessage[1]));
     } else if (tempPenType == -3) {
         stage.removeChildren();
+    } else if(tempPenType == -4){
+        const curInteractiveTool = parseInt(splittedMessage[1]);
+        switch(curInteractiveTool){
+            case -1:
+                twoVideoClicked();
+                break;
+            case 0:
+                whiteboardClicked();
+                break;
+            case 1:
+                pdfviewClicked();
+                break;
+            case 2:
+                screenShareClicked();
+                break;
+            default:
+                break;
+        }
     }
 
 }

@@ -1,0 +1,7 @@
+.pen-cursor {
+    cursor: url("/public/cursors/pen-tool.svg"), auto !important;
+}
+
+.default-cursor {
+    cursor: pointer !important;
+}
