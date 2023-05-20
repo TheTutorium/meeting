@@ -1,7 +1,55 @@
 .pen-cursor {
-    cursor: url("/public/cursors/pen-tool.svg"), auto !important;
+    cursor: url("/public/cursors/pencil.svg"), auto !important;
+}
+
+.eraser-cursor {
+    cursor: url("/public/cursors/eraser.svg"), auto !important;
+}
+
+.text-cursor{
+    cursor: url("/public/cursors/type.svg"), auto !important;
+}
+
+.typing-cursor{
+    cursor: text !important;
 }
 
 .default-cursor {
+    cursor: default !important;
+}
+
+.image-cursor {
+    cursor: url("/public/cursors/image.svg"), auto !important;
+}
+
+.image-add-cursor{
+    cursor: url("/public/cursors/image-plus.svg"), auto !important;
+}
+
+.pointer-cursor{
     cursor: pointer !important;
+}
+
+.lr-resize-cursor{
+    cursor: ew-resize !important;
+}
+
+.ud-resize-cursor{
+    cursor: ns-resize !important;
+}
+
+.ul-dr-resize-cursor{
+    cursor: nwse-resize !important;
+}
+
+.ur-dl-resize-cursor{
+    cursor: nesw-resize !important;
+}
+
+.move-cursor{
+    cursor: move !important;
+}
+
+.grab-cursor{
+    cursor: grabbing !important;
 }

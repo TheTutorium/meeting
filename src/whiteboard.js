@@ -97,6 +97,7 @@ $('#tool-button-2').dropdown({
             if (writing_on_board) {
                 sendTextToConn();
                 writing_on_board = false;
+                changeCursor('text-cursor');
             }
 
             text_size = parseInt(value);
@@ -104,7 +105,7 @@ $('#tool-button-2').dropdown({
         else {
             if (writing_on_board) {
                 sendTextToConn();
-
+                changeCursor('text-cursor');
                 writing_on_board = false;
             }
 
@@ -195,6 +196,7 @@ fileInput.addEventListener('change', (event) => {
         const sprite = new PIXI.Sprite(texture);
         stage.addChild(sprite);*/
         have_file = true;
+        changeCursor("image-add-cursor");
     };
     reader.readAsDataURL(file);
 });
@@ -256,6 +258,7 @@ export const changeInteractiveTool = (tool) => {
 
     if (writing_on_board) {
         sendTextToConn();
+        changeCursor('text-cursor');
     }
 
     writing_on_board = false;
@@ -386,10 +389,40 @@ export function setCurrentZIndex(newValue) {
 }
 let currentPenType = 0;
 
+function changeCursor(newCursor){
+    canvas.classList.remove(past_cursor);
+    canvas.classList.add(newCursor);
+    past_cursor = newCursor;
+}
+
 const changePenType = (type) => {
+
+    if(currentPenType != type){
+        switch(type){
+            case 0:
+                changeCursor("pen-cursor");
+                break;
+            case 1:
+                changeCursor("eraser-cursor");
+                break;
+            case 2:
+                changeCursor("text-cursor");
+                break;
+            case 3:
+                changeCursor("image-cursor");
+                break;
+            case 4:
+                changeCursor("pointer-cursor");
+                break;
+            default:
+                break;
+        }
+    }
 
     currentPenType = type;
     currentZIndex++;
+
+
 
     if (writing_on_board) {
         sendTextToConn();
@@ -584,10 +617,33 @@ const onMouseMove = (e) => {
             selectCheck.down = checkEdge(curMousePosRef, temp_corners[2], temp_corners[3]);
             selectCheck.left = checkEdge(curMousePosRef, temp_corners[3], temp_corners[0]);
             selectCheck.on = SelectCheck(temp_mouse.x, temp_mouse.y, temp_corners[0].x, temp_corners[0].y, temp_corners[2].x, temp_corners[2].y);
+
         }
 
+        if(selectCheck.upperLeft){
+            changeCursor("ul-dr-resize-cursor");
+        }else if(selectCheck.upperRight){
+            changeCursor("ur-dl-resize-cursor");
+        }else if(selectCheck.lowerRight){
+            changeCursor("ul-dr-resize-cursor");
+        }else if(selectCheck.lowerLeft){
+            changeCursor("ur-dl-resize-cursor");
+        }else if(selectCheck.up){
+            changeCursor("ud-resize-cursor");
+        }else if(selectCheck.right){
+            changeCursor("lr-resize-cursor");
+        }else if(selectCheck.down){
+            changeCursor("ud-resize-cursor");
+        }else if(selectCheck.left){
+            changeCursor("lr-resize-cursor");
+        }else if(selectCheck.on){
+            changeCursor("move-cursor");
+        }else{
+            changeCursor("pointer-cursor");
+        }
 
         initPointer = curMousePosRef;
+
         return;
     }
 
@@ -600,19 +656,6 @@ const onMouseMove = (e) => {
 
 
     curDistance = Math.sqrt((curMousePosRef.x - mousePosRef.x) * (curMousePosRef.x - mousePosRef.x) + (curMousePosRef.y - mousePosRef.y) * (curMousePosRef.y - mousePosRef.y));
-
-    /*if(last_mouse_button == 1){
-        const canvasCenter = { x: canvas.width / 2, y: canvas.height / 2 };
-        const angleDelta = curMousePosRef.x - initPointer.x;
-        const rotationAngle = angleDelta * 0.01;
-
-        //stage.pivot.set(canvasCenter.x, canvasCenter.y);
-        stage.rotation += rotationAngle;
-
-        initPointer = curMousePosRef;
-
-        return;
-    }*/
 
     if (last_mouse_button == 2) {
 
@@ -802,6 +845,7 @@ const onMouseMove = (e) => {
 container.oncontextmenu = function (e) { e.preventDefault(); e.stopPropagation(); }
 
 let current_selected_object_index = 0;
+let beforeGrab;
 
 const onMouseDown = (e) => {
     mousePosRef = getMousePos(e);
@@ -818,6 +862,8 @@ const onMouseDown = (e) => {
     if (e.button === 2) {
         console.log("2");
         last_mouse_button = 2;
+        beforeGrab = past_cursor;
+        changeCursor("grab-cursor");
         return;
     }
 
@@ -839,6 +885,8 @@ const onMouseDown = (e) => {
         if (writing_on_board == true) {
             sendTextToConn();
         }
+        changeCursor("typing-cursor");
+
         console.log("Typing");
         const mouseX = e.clientX - app.renderer.view.offsetLeft;
         const mouseY = e.clientY - app.renderer.view.offsetTop;
@@ -865,6 +913,7 @@ const onMouseDown = (e) => {
         if (have_file) {
 
             have_file = false;
+            changeCursor("image-cursor");
 
             image_texture = PIXI.Texture.from(current_image);
 
@@ -1000,6 +1049,10 @@ function hoverSelectedObject() {
 const onMouseUp = (e) => {
     isMouseButtonDown = false;
 
+    if(last_mouse_button == 2){
+        changeCursor(beforeGrab);
+    }
+
     if (currentPenType == 4 && current_hover >= 0) {
         const mess = currentPenType +
             "|" +
@@ -1119,6 +1172,8 @@ document.addEventListener("keydown", (event) => {
         if (event.key.localeCompare("Enter") === 0) {
             //Send Text
             sendTextToConn();
+            changeCursor('text-cursor');
+
 
             writing_on_board = false;
         }
@@ -1178,7 +1233,11 @@ container.addEventListener("mouseup", onMouseUp, 0);
 
 //Mouse Cursor Change
 
-//canvas.classList.add('pen-cursor');
+let past_cursor = "default-cursor";
+
+canvas.classList.remove(past_cursor);
+canvas.classList.add('pen-cursor');
+
 
 //PDF Share
 
@@ -1397,6 +1456,7 @@ const shotImage = () => {
     console.log(current_image);
     changePenType(3);
     have_file = true;
+    changeCursor("image-add-cursor");
     changeInteractiveTool(0);
 
 }
