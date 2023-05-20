@@ -9,6 +9,7 @@ let localStream;
 let isConnecting = false;
 let autoConnect = false;
 let connectInterval;
+let isOtherUserSharingScreen = false;
 
 let myPeerId = null;
 let connectToPeerId = null;
@@ -33,6 +34,13 @@ function checkPath() {
       myPeerId = segment2;
       connectToPeerId = segment3;
     }
+  }
+}
+
+// Function to send data to the remote peer
+export function sendDataToPeer(data) {
+  if (conn) {
+    conn.send(data);
   }
 }
 
@@ -163,6 +171,10 @@ function handleData(data) {
     conn.close(); // Close the connection
     connectButton.disabled = false; // Enable the "Connect" button
     isConnecting = false;
+  } else if (data=== '|share-screen-start') {
+    isOtherUserSharingScreen = true;
+  } else if (data === '|share-screen-stop') {
+    isOtherUserSharingScreen = false;
   }
 }
 
