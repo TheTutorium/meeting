@@ -1,4 +1,4 @@
-import { currentZIndex, setCurrentZIndex, history, setHistory, stage, setCanvasElements, canvasElements, changeInteractiveTool, receivePdf, goToPageHelper, interactibleObjects } from "./whiteboard.js";
+import { handleWhiteboardData } from "./whiteboard.js";
 
 let Peer = window.Peer;
 
@@ -12,9 +12,6 @@ let connectInterval;
 
 let myPeerId = null;
 let connectToPeerId = null;
-
-// whiteboard related variables
-let connectionInitiated = false;
 
 // html content
 let remoteVideo = document.getElementById("remote-video");
@@ -141,119 +138,6 @@ function startVideoCall() {
     });
 }
 
-// whiteboard related data handling
-function handleWhiteboardData(data) {
-
-  let splittedMessage = data.split("|");
-
-  let tempPenType = parseInt(splittedMessage[0]);
-  setCurrentZIndex(parseInt(splittedMessage[1]));
-
-  if (tempPenType >= 0) {
-
-    setHistory(history + data + "\n");
-  }
-
-  if (tempPenType == 0) { // Pen
-    let initX = parseFloat(splittedMessage[2]);
-    let initY = parseFloat(splittedMessage[3]);
-    let control1x = parseFloat(splittedMessage[4]);
-    let control1y = parseFloat(splittedMessage[5]);
-    let control2x = parseFloat(splittedMessage[6]);
-    let control2y = parseFloat(splittedMessage[7]);
-    let finalX = parseFloat(splittedMessage[8]);
-    let finalY = parseFloat(splittedMessage[9]);
-    let tempPenSize = parseInt(splittedMessage[10]);
-    let tempPenColor = parseInt(splittedMessage[11]);
-
-    let tempSprite = new PIXI.Graphics();
-
-    tempSprite.lineStyle(tempPenSize, tempPenColor, 1);
-
-    tempSprite.zIndex = currentZIndex;
-    tempSprite.moveTo(initX, initY);
-    tempSprite.bezierCurveTo(control1x, control1y, control2x, control2y, finalX, finalY);
-
-    stage.addChild(tempSprite);
-  } else if (tempPenType == 1) { // Eraser
-    let initX = parseFloat(splittedMessage[2]);
-    let initY = parseFloat(splittedMessage[3]);
-    let control1x = parseFloat(splittedMessage[4]);
-    let control1y = parseFloat(splittedMessage[5]);
-    let control2x = parseFloat(splittedMessage[6]);
-    let control2y = parseFloat(splittedMessage[7]);
-    let finalX = parseFloat(splittedMessage[8]);
-    let finalY = parseFloat(splittedMessage[9]);
-    let tempEraserSize = parseInt(splittedMessage[10]);
-
-    let tempSprite = new PIXI.Graphics();
-
-    tempSprite.lineStyle(tempEraserSize, 0xffffff, 1);
-
-    tempSprite.zIndex = currentZIndex;
-    tempSprite.moveTo(initX, initY);
-    tempSprite.bezierCurveTo(control1x, control1y, control2x, control2y, finalX, finalY);
-
-    stage.addChild(tempSprite);
-  } else if (tempPenType == 2) { // Typing
-    let tempTextSize = parseInt(splittedMessage[2]);
-    let tempTextColor = parseInt(splittedMessage[3]);
-    let tempText = splittedMessage[4];
-    let tempX = parseFloat(splittedMessage[5]);
-    let tempY = parseFloat(splittedMessage[6]);
-
-    let tempStyle = new PIXI.TextStyle({
-      fontFamily: "Arial",
-      fontSize: tempTextSize,
-      fill: tempTextColor,
-    });
-
-    let tempPText = new PIXI.Text(tempText, tempStyle);
-    tempPText.zIndex = currentZIndex;
-    tempPText.x = tempX;
-    tempPText.y = tempY;
-
-    interactibleObjects.push(tempPText);
-    stage.addChild(tempPText);
-  } else if (tempPenType == 3) {
-    let temp_image = splittedMessage[2];
-    let tempX = parseFloat(splittedMessage[3]);
-    let tempY = parseFloat(splittedMessage[4]);
-
-    const image_texture = PIXI.Texture.from(temp_image);
-    const sprite = new PIXI.Sprite(image_texture);
-
-    sprite.x = tempX;
-    sprite.y = tempY;
-
-    interactibleObjects.push(sprite);
-    stage.addChild(sprite);
-  } else if (tempPenType == 4) {
-    let temp_obj_index = parseInt(splittedMessage[1]);
-    let tempX = parseFloat(splittedMessage[2]);
-    let tempY = parseFloat(splittedMessage[3]);
-    let tempWidth = parseFloat(splittedMessage[4]);
-    let tempHeight = parseFloat(splittedMessage[5]);
-
-    interactibleObjects[temp_obj_index].position.x = tempX;
-    interactibleObjects[temp_obj_index].position.y = tempY;
-    interactibleObjects[temp_obj_index].width = tempWidth;
-    interactibleObjects[temp_obj_index].height = tempHeight;
-
-  } else if (tempPenType == -1) {
-    changeInteractiveTool(1);
-
-    receivePdf(splittedMessage[1]);
-
-  } else if (tempPenType == -2) {
-    //While not looking pdf rendering does not work correctly
-    goToPageHelper(parseInt(splittedMessage[1]));
-  } else if (tempPenType == -3) {
-    stage.removeChildren();
-  }
-
-}
-
 // Function to handle the received data from the remote peer
 function handleData(data) {
   if (data[0] != '|') {
@@ -293,8 +177,7 @@ checkPath();
 if (connectToPeerId && myPeerId) {
   peer = new Peer(myPeerId, {
     host: "/",
-    path: "/peerjs/myapp",
-    port: 3000
+    path: "/peerjs/myapp"
   });
 
   if (myPeerId < connectToPeerId) {
@@ -305,8 +188,7 @@ if (connectToPeerId && myPeerId) {
 else {
   peer = new Peer({
     host: "/",
-    path: "/peerjs/myapp",
-    port: 3000
+    path: "/peerjs/myapp"
   });
 }
 
