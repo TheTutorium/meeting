@@ -13,9 +13,6 @@ let connectInterval;
 let myPeerId = null;
 let connectToPeerId = null;
 
-// whiteboard related variables
-let connectionInitiated = false;
-
 // html content
 let remoteVideo = document.getElementById("remote-video");
 let localVideo = document.getElementById("local-video");
