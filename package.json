@@ -8,10 +8,14 @@
     "express": "^4.18.2",
     "fmin": "^0.0.2",
     "fomantic-ui": "^2.9.2",
+    "jquery": "^3.7.0",
     "least-squares": "^0.0.2",
+    "optimization-js": "^1.5.0",
     "optimize-js": "^1.0.3",
+    "pdfjs-dist": "^3.6.172",
     "peer": "^0.6.1",
-    "peerjs": "^1.4.7"
+    "peerjs": "^1.4.7",
+    "pixi.js": "^7.2.4"
   },
   "scripts": {
     "start": "node ./server.js"
