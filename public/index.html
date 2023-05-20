@@ -33,23 +33,29 @@
     <script src="/screenshare.js" type="module"></script>
   </head>
   <body>
-      <div id="main-container">
-        <div id="video-container">
-          <video id="remote-video" autoplay></video>
-      </div>
-      <div id="interactives">
-        <div id="interactive-0" class="white-board">
-        </div>
+    <div id="video-container1" >
+      <video id="remote-video" class="videoCam" autoplay></video>
+    </div>
+    <div id="video-container2" >
+      <video id="local-video" class="videoCam" autoplay></video>
+    </div>
+    <div>
+      <div>
+        <div id="interactive-0" class="white-board"></div>
         <div  id="interactive-1" class="hidden">
           <canvas id="pdf_canvas"></canvas>
         </div>
       </div>
-      <div id="video-container">
-        <video id="local-video" autoplay></video>
-      </div>
+      
     </div>
     <div id="tools-0" class="tools"> 
       <div class="toolsbar ui compact segment" style="display: inline-block;">
+        <button id="toggle-microphone" onclick="toggleMicrophoneOrVideo(true,false)" class="tool large circular ui icon button">
+          <i id="toggle-microphone-icon" class="microphone icon"></i>
+        </button>
+        <button id="toggle-video" onclick="toggleMicrophoneOrVideo(false,true)" class="tool large circular ui icon button">
+          <i id="toggle-video-icon" class="video icon"></i>
+        </button>
         <button id="tool-button-0" onclick="changePenType(0)" class="tool large  circular ui icon bottom left pointing dropdown button selected-button">
           <i class="pen icon"></i>
           <div class="menu">
@@ -134,12 +140,6 @@
         </button>
         <button id="disconnectButton" class="tool red large circular ui icon button" disabled>
           <i class="phone slash icon"></i>
-        </button>
-        <button id="toggle-microphone" onclick="toggleMicrophoneOrVideo(true,false)" class="tool huge circular ui icon button">
-          <i id="toggle-microphone-icon" class="microphone icon"></i>
-        </button>
-        <button id="toggle-video" onclick="toggleMicrophoneOrVideo(false,true)" class="tool huge circular ui icon button">
-          <i id="toggle-video-icon" class="video icon"></i>
         </button>
       </div>
     </div>
