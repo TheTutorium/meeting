@@ -1,4 +1,5 @@
 import { handleWhiteboardData } from "./whiteboard.js";
+import { currentlySharing } from "./screenshare.js";
 
 let Peer = window.Peer;
 
@@ -145,6 +146,11 @@ export const toggleMicrophoneOrVideo = (microphoneToggle, videoToggle) => {
     else {
       document.getElementById('toggle-video-icon').className = 'video slash icon';
     }
+  }
+
+  if ( microphoneToggle && !videoToggle && currentlySharing ) {
+    streamSenderAudio.replaceTrack(null);
+    return;
   }
 
   // If both video and microphone are off, send black screen with no audio to the remote peer
