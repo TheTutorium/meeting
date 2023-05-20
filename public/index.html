@@ -135,6 +135,12 @@
         <button id="disconnectButton" class="tool red large circular ui icon button" disabled>
           <i class="phone slash icon"></i>
         </button>
+        <button id="toggle-microphone" onclick="toggleMicrophoneOrVideo(true,false)" class="tool huge circular ui icon button">
+          <i id="toggle-microphone-icon" class="microphone icon"></i>
+        </button>
+        <button id="toggle-video" onclick="toggleMicrophoneOrVideo(false,true)" class="tool huge circular ui icon button">
+          <i id="toggle-video-icon" class="video icon"></i>
+        </button>
       </div>
     </div>
     <div style="display: flex; justify-content: center;">
