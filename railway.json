@@ -2,8 +2,8 @@
     "version": 2,
     "environments": {
       "production": {
-        "buildCommand": "npm install",
-        "startCommand": "npm run start"
+        "buildCommand": "yarn install",
+        "startCommand": "node server.js"
       }
     }
   }
