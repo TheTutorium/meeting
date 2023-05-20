@@ -243,6 +243,7 @@ let currentInteractiveTool = 0;
 
 export const changeInteractiveTool = (tool) => {
 
+    console.log(tool + " prev " + currentInteractiveTool);
 
     const prevTools = document.querySelector(`#interactive-${currentInteractiveTool}`);
     prevTools.classList.add('hidden');
@@ -274,10 +275,26 @@ const rightButton = document.getElementById('next_page');
 const uploadPdfButton = document.getElementById('upload-pdf');
 const edditButton = document.getElementById('pdf-tool-button-0');
 
-const twoVideoClicked = () => {
+export const twoVideoClicked = () => {
 
+    if(currentInteractiveTool == -1){
+        return;
+    }
+
+    conn.send("-4|-1");
+    currentInteractiveTool = -1;
+    
+
+    console.log("in two video");
 };
+
 const whiteboardClicked = () => {
+    if(currentInteractiveTool == 0){
+        return;
+    }
+        
+    conn.send("-4|0");
+
     changeInteractiveTool(0);
     
     penButton.classList.remove('hidden');
@@ -295,6 +312,12 @@ const whiteboardClicked = () => {
     edditButton.classList.add('hidden');
 };
 const pdfviewClicked = () => {
+    if(currentInteractiveTool == 1){
+        return;
+    }
+
+    conn.send("-4|1");
+
     changeInteractiveTool(1);
 
     penButton.classList.add('hidden');
@@ -311,8 +334,15 @@ const pdfviewClicked = () => {
     uploadPdfButton.classList.remove('hidden');
     edditButton.classList.remove('hidden');
 };
-const screenShareClicked = () => {
+export const screenShareClicked = () => {
+    if(currentInteractiveTool == 2){
+        return;
+    }
 
+    conn.send("-4|2");
+    currentInteractiveTool = 2;
+
+    console.log("in screen share");
 };
 
 
@@ -1361,7 +1391,6 @@ export function goToPageHelper(pageNumber){
 }
 
 
-/** IMPORTANT: This only takes screenshot of first page */
 const shotImage = () => {
     // Get the iframe element
     current_image = pdf_canvas.toDataURL();
@@ -1546,6 +1575,24 @@ export function handleWhiteboardData(data) {
         goToPageHelper(parseInt(splittedMessage[1]));
     } else if (tempPenType == -3) {
         stage.removeChildren();
+    } else if(tempPenType == -4){
+        const curInteractiveTool = parseInt(splittedMessage[1]);
+        switch(curInteractiveTool){
+            case -1:
+                twoVideoClicked();
+                break;
+            case 0:
+                whiteboardClicked();
+                break;
+            case 1:
+                pdfviewClicked();
+                break;
+            case 2:
+                screenShareClicked();
+                break;
+            default:
+                break;
+        }
     }
 
 }
