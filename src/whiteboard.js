@@ -1531,7 +1531,7 @@ export function handleWhiteboardData(data) {
         interactibleObjects[temp_obj_index].height = tempHeight;
 
     } else if (tempPenType == -1) {
-        changeInteractiveTool(1);
+        pdfviewClicked();
 
         receivePdf(splittedMessage[1]);
 
