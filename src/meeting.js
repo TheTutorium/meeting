@@ -172,6 +172,7 @@ function handleData(data) {
     connectButton.disabled = false; // Enable the "Connect" button
     isConnecting = false;
   } else if (data=== '|share-screen-start') {
+    //Screen Share 
     isOtherUserSharingScreen = true;
   } else if (data === '|share-screen-stop') {
     isOtherUserSharingScreen = false;

@@ -274,6 +274,9 @@ const rightButton = document.getElementById('next_page');
 const uploadPdfButton = document.getElementById('upload-pdf');
 const edditButton = document.getElementById('pdf-tool-button-0');
 
+const twoVideoClicked = () => {
+
+};
 const whiteboardClicked = () => {
     changeInteractiveTool(0);
     
@@ -307,6 +310,9 @@ const pdfviewClicked = () => {
     rightButton.classList.remove('hidden');
     uploadPdfButton.classList.remove('hidden');
     edditButton.classList.remove('hidden');
+};
+const screenShareClicked = () => {
+
 };
 
 
