@@ -282,7 +282,7 @@ if (connectToPeerId && myPeerId) {
 
   if (myPeerId < connectToPeerId) {
     autoConnect = true;
-    connectInterval = setInterval(handleDisconnect, 10000);
+    connectInterval = setInterval(handleDisconnect, 5000);
   }
 }
 else {
