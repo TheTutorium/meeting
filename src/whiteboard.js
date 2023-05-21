@@ -1603,6 +1603,7 @@ const resetWhiteboard = () => {
         "|" +
         "0";
     conn.send(mess);
+    history += mess + "\n";
 }
 
 document.resetWhiteboard = resetWhiteboard;
@@ -1667,7 +1668,7 @@ export function handleWhiteboardData(data) {
     let tempPenType = parseInt(splittedMessage[0]);
     setCurrentZIndex(parseInt(splittedMessage[1]));
 
-    if (tempPenType >= 0) {
+    if (tempPenType >= 0 || tempPenType == -3) {
 
         setHistory(history + data + "\n");
     }
