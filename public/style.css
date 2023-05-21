@@ -70,8 +70,11 @@ body {
     height: 27vw !important; width: 48vw !important;
     margin-top: 3vw;
 }
-.video-container1Chat { }
+
 .video-container2Chat { float: left !important; margin-left: 3vw !important;}
+
+.video-container1ScreenShare { height: 36vw !important; width: 64vw !important; }
+.video-container2ScreenShare { height: 9vw !important; width: 16vw !important;float: left !important; margin-left: 3vw !important;}
 
 .shared-screen {
     position: absolute;
@@ -137,7 +140,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #333;
+    background-color: #202124;
     color: #fff;
     padding: 2vh 2vw;
 }
@@ -159,3 +162,20 @@ body {
 }
 
 .input { width: 90px; margin-right: 5px; }
+
+#full-screen-button {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    z-index: 10;
+    background: #202124;
+    border: none;
+    color: #ffffff;
+    border-top-left-radius: 50% !important;
+    border-bottom-right-radius: 20px !important;
+    height: 50px;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

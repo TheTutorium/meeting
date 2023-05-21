@@ -28,6 +28,8 @@ var eraser_size = 32;
 var text_size = 14;
 var text_color = "0x000000";
 
+var fulScreenMode = 0;
+
 var writing_on_board = false;
 
 let selectedObject = null;
@@ -325,6 +327,9 @@ const localVideoContainer = document.getElementById('video-container12');
 const remoteVideo = document.getElementById('remote-video');
 const localVideo = document.getElementById('local-video');
 
+const fullScreenButton = document.getElementById('full-screen-button');
+const fullScreenIcon = document.getElementById('full-screen-icon');
+
 function removeSelect() {
     penButton.classList.remove('selected-button');
     eraserButton.classList.remove('selected-button');
@@ -348,12 +353,14 @@ export const chatView = () => {
     selectButton.classList.add('hidden');
     resetButton.classList.add('hidden');
     downloadButton.classList.add('hidden');
-
+    
     leftButton.classList.add('hidden');
     pageField.classList.add('hidden');
     rightButton.classList.add('hidden');
     uploadPdfButton.classList.add('hidden');
     edditButton.classList.add('hidden');
+
+    fullScreenButton.className = "hidden";
 
     document.getElementById("video-container1").className = "video-container1 video-container1Chat";
     document.getElementById("video-container2").className = "video-container2 video-container2Chat";
@@ -388,6 +395,8 @@ const whiteboardClicked = () => {
     rightButton.classList.add('hidden');
     uploadPdfButton.classList.add('hidden');
     edditButton.classList.add('hidden');
+    
+    fullScreenButton.className = "hidden";
 
     document.getElementById("video-container1").className = "video-container1 video-container1Whiteboard";
     document.getElementById("video-container2").className = "video-container2 video-container2Whiteboard";
@@ -419,6 +428,8 @@ const pdfviewClicked = () => {
     rightButton.classList.remove('hidden');
     uploadPdfButton.classList.remove('hidden');
     edditButton.classList.remove('hidden');
+    
+    fullScreenButton.className = "hidden";
 
     document.getElementById("video-container1").className = "video-container1 video-container1Whiteboard";
     document.getElementById("video-container2").className = "video-container2 video-container2Whiteboard";
@@ -451,8 +462,10 @@ export const screenShareClicked = () => {
     uploadPdfButton.classList.add('hidden');
     edditButton.classList.add('hidden');
 
-    document.getElementById("video-container1").className = "video-container1";
-    document.getElementById("video-container2").className = "video-container2";
+    fullScreenButton.className = "";
+
+    document.getElementById("video-container1").className = "video-container1 video-container1ScreenShare";
+    document.getElementById("video-container2").className = "video-container2 video-container2ScreenShare";
     document.getElementById("remote-video").className = "videoCam";
     document.getElementById("local-video").className = "videoCam";
 
@@ -461,7 +474,6 @@ export const screenShareClicked = () => {
 
     console.log("in screen share");
 };
-
 
 window.changeInteractiveTool = changeInteractiveTool;
 window.whiteboardClicked = whiteboardClicked;
@@ -1790,3 +1802,33 @@ export function handleWhiteboardData(data) {
     }
 
 }
+
+const openFullscreen = (elem) => {
+    if(fulScreenMode == 0) {
+        if (elem.requestFullscreen) 
+            elem.requestFullscreen();
+        else if (elem.mozRequestFullScreen)  /* Firefox */
+            elem.mozRequestFullScreen();
+        else if (elem.webkitRequestFullscreen)  /* Chrome, Safari & Opera */
+            elem.webkitRequestFullscreen();
+        else if (elem.msRequestFullscreen)  /* IE/Edge */
+            elem.msRequestFullscreen();
+        
+        fulScreenMode = 1;
+        fullScreenIcon.className = "compress icon";
+    }
+    else {
+        if (document.exitFullscreen) 
+            document.exitFullscreen();
+          else if (document.mozCancelFullScreen) /* Firefox */
+            document.mozCancelFullScreen();
+          else if (document.webkitExitFullscreen) /* Chrome, Safari and Opera */
+            document.webkitExitFullscreen();
+          else if (document.msExitFullscreen) /* IE/Edge */
+            document.msExitFullscreen();
+          
+        fulScreenMode = 0;
+        fullScreenIcon.className = "expand icon";
+    }
+  }
+  document.openFullscreen = openFullscreen;
