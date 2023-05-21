@@ -1,5 +1,5 @@
 import { currentCall, sendDataToPeer, streamSenderVideo, streamSenderAudio, toggleMicrophoneOrVideo } from './meeting.js';
-import { screenShareClicked, twoVideoClicked } from './whiteboard.js';
+import { screenShareClicked, chatView } from './whiteboard.js';
 
 let screenStream = null; // Variable to store the screen sharing stream
 export let currentlySharing = false;
@@ -41,7 +41,7 @@ function handleScreenShareEnded(event) {
   // Replace the video track of the peer connection sender with the camera video track
   // Store the camera video stream
   toggleMicrophoneOrVideo(false, false);
-  twoVideoClicked();
+  chatView();
 
   // make video button in index.html hidden
   document.getElementById('toggle-video').classList.remove('hidden');

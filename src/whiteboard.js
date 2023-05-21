@@ -71,26 +71,35 @@ function sendTextToConn() {
 
 var last_mouse_button = 0;
 
-
-
 $('#tool-button-0').dropdown({
-    onChange: function (value, text, $selectedItem) {
-        // changing the value of pen_size based on the selection
-        if (value.charAt(0) != '0')
-            pen_size = parseInt(value);
-        else
-            pen_color = parseInt(value);
-
+    on: 'nothing', // disable opening on hover and left click
+    onChange: function(value, text, $selectedItem) {
+      // changing the value of pen_size based on the selection
+      if (value.charAt(0) != '0')
+        pen_size = parseInt(value);
+      else
+        pen_color = parseInt(value);
     }
-});
+  });
+$('#tool-button-0').on('contextmenu', function(event) {
+    event.preventDefault(); // prevent the browser context menu from opening
+    $(this).dropdown('toggle'); // open or close the dropdown
+  });
 
 $('#tool-button-1').dropdown({
+    on: 'nothing', // disable opening on hover and left click
     onChange: function (value, text, $selectedItem) {
         // changing the value of pen_size based on the selection
         eraser_size = parseInt(value);
     }
 });
+$('#tool-button-1').on('contextmenu', function(event) {
+    event.preventDefault(); // prevent the browser context menu from opening
+    $(this).dropdown('toggle'); // open or close the dropdown
+  });
+
 $('#tool-button-2').dropdown({
+    on: 'nothing', // disable opening on hover and left click
     onChange: function (value, text, $selectedItem) {
         // changing the value of pen_size based on the selection
         if (value.charAt(0) != '0') {
@@ -113,6 +122,10 @@ $('#tool-button-2').dropdown({
         }
     }
 });
+$('#tool-button-2').on('contextmenu', function(event) {
+    event.preventDefault(); // prevent the browser context menu from opening
+    $(this).dropdown('toggle'); // open or close the dropdown
+  });
 
 $('#screen-options-button').dropdown({
     onChange: function (value, text, $selectedItem) {
@@ -291,7 +304,20 @@ const rightButton = document.getElementById('next_page');
 const uploadPdfButton = document.getElementById('upload-pdf');
 const edditButton = document.getElementById('pdf-tool-button-0');
 
-export const twoVideoClicked = () => {
+const remoteVideoContainer = document.getElementById('video-container1');
+const localVideoContainer = document.getElementById('video-container12');
+const remoteVideo = document.getElementById('remote-video');
+const localVideo = document.getElementById('local-video');
+
+function removeSelect() {
+    penButton.classList.remove('selected-button');
+    eraserButton.classList.remove('selected-button');
+    textButton.classList.remove('selected-button');
+    selectButton.classList.remove('selected-button');
+    uploadImgButton.classList.remove('selected-button');
+}
+
+export const chatView = () => {
 
     if(currentInteractiveTool == -1){
         return;
@@ -299,7 +325,6 @@ export const twoVideoClicked = () => {
 
     conn.send("-4|-1");
     currentInteractiveTool = -1;
-    
 
     console.log("in two video");
 };
@@ -316,8 +341,8 @@ const whiteboardClicked = () => {
     penButton.classList.remove('hidden');
     eraserButton.classList.remove('hidden');
     textButton.classList.remove('hidden');
-    uploadImgButton.classList.remove('hidden');
     selectButton.classList.remove('hidden');
+    uploadImgButton.classList.remove('hidden');
     resetButton.classList.remove('hidden');
     downloadButton.classList.remove('hidden');
 
@@ -372,7 +397,7 @@ window.pdfviewClicked = pdfviewClicked;
 var save_count = 0;
 
 const saveWhiteboard = () => {
-
+    removeSelect();
     const element = document.createElement('a');
 
     // Set the text content and file name
@@ -409,22 +434,31 @@ function changeCursor(newCursor){
 }
 
 const changePenType = (type) => {
-
     if(currentPenType != type){
         switch(type){
             case 0:
+                removeSelect();
+                penButton.classList.add('selected-button');
                 changeCursor("pen-cursor");
                 break;
             case 1:
+                removeSelect();
+                eraserButton.classList.add('selected-button');
                 changeCursor("eraser-cursor");
                 break;
             case 2:
+                removeSelect();
+                textButton.classList.add('selected-button');
                 changeCursor("text-cursor");
                 break;
             case 3:
+                removeSelect();
+                uploadImgButton.classList.add('selected-button');
                 changeCursor("image-cursor");
                 break;
             case 4:
+                removeSelect();
+                selectButton.classList.add('selected-button');
                 changeCursor("pointer-cursor");
                 break;
             default:
@@ -1478,6 +1512,7 @@ document.shotImage = shotImage;
 
 //Reset Whiteboard
 const resetWhiteboard = () => {
+    removeSelect();
     stage.removeChildren();
     const mess = "-3" +
         "|" +
@@ -1652,7 +1687,7 @@ export function handleWhiteboardData(data) {
         const curInteractiveTool = parseInt(splittedMessage[1]);
         switch(curInteractiveTool){
             case -1:
-                twoVideoClicked();
+                chatView();
                 break;
             case 0:
                 whiteboardClicked();
