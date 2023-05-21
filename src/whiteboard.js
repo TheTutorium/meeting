@@ -146,14 +146,16 @@ const textColorSelect = document.getElementById("text-color");
 const app = new PIXI.Application({
     antialias: true,
     background: "#ffffff",
-    width: window.innerWidth * 0.45,
-    height: window.innerHeight * 0.6,
+    width: window.innerWidth * 0.92,
+    height: window.innerHeight * 0.92,
 });
 
+
+
 /*
-window.addEventListener("resize", () => {
-    app.resize(window.width * 2, window.height * 2);
-});*/
+    width: window.innerWidth * 0.45,
+    height: window.innerHeight * 0.6,
+*/
 
 export const stage = new PIXI.Container();
 stage.scale.set(1);
@@ -166,6 +168,8 @@ container.appendChild(app.view);
 
 // Get the canvas element
 const canvas = app.view;
+canvas.width *= 0.45;
+canvas.height *= 0.6;
 
 // Add a 'wheel' event listener to the canvas
 canvas.addEventListener('wheel', onCanvasScroll);
@@ -222,9 +226,20 @@ function onCanvasScroll(event) {
         event.preventDefault(); // Prevent default scrolling behavior
 
         // Adjust the canvas size based on the scroll direction
-        const scaleFactor = event.deltaY > 0 ? 0.9 : 1.1;
-        canvas.width *= scaleFactor;
-        canvas.height *= scaleFactor;
+        const scaleFactorHeight = event.deltaY > 0 ? 0.91 : 1.09;
+        const scaleFactorWidth = event.deltaY > 0 ? 0.84 : 1.16;
+
+        if(canvas.width * scaleFactorWidth < window.innerWidth * 0.92){
+            canvas.width *= scaleFactorWidth;
+        }else{
+            canvas.width = window.innerWidth * 0.92;
+        }
+
+        if(canvas.height * scaleFactorHeight < window.innerHeight * 0.88){
+            canvas.height *= scaleFactorHeight;
+        }else{
+            canvas.height = window.innerHeight * 0.88;
+        }
     }else{
         // Get the scroll direction
         const delta = Math.sign(event.deltaY) * SCALE_CONST;

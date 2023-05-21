@@ -7,7 +7,6 @@ body {
 .white-board {
     display: flex;
     justify-content: center;
-    margin: 3vh 3vw;
 }
 
 .videoCam{
