@@ -11,6 +11,7 @@ let isConnecting = false;
 let autoConnect = false;
 let connectInterval;
 let isOtherUserSharingScreen = false;
+let isRemoteOn = true;
 
 let microphoneOn = true;
 let videoOn = true;
@@ -141,10 +142,16 @@ export const toggleMicrophoneOrVideo = (microphoneToggle, videoToggle) => {
     videoOn = !videoOn;
     // Change the video icon
     if (videoOn) {
+      document.getElementById("local-video").classList.remove("hidden");
+      document.getElementById("local-video-image").classList.add("hidden");
       document.getElementById('toggle-video-icon').className = 'video icon';
+      conn.send("|video-on");
     }
     else {
+      document.getElementById("local-video").classList.add("hidden");
+      document.getElementById("local-video-image").classList.remove("hidden");
       document.getElementById('toggle-video-icon').className = 'video slash icon';
+      conn.send("|video-off");
     }
   }
 
@@ -190,11 +197,14 @@ export const toggleMicrophoneOrVideo = (microphoneToggle, videoToggle) => {
     blackVideoTrack.enabled = false; // Disable the black video track
     localStream = blackStream;
     localVideo.srcObject = blackStream;
+
+
     return;
   }
   else {
     navigator.mediaDevices.getUserMedia({ video: videoOn, audio: false })
       .then(stream => {
+        
         localStream = stream;
         localVideo.srcObject = stream;
       })
@@ -215,6 +225,10 @@ function enableConnection() {
 function startVideoCall() {
   navigator.mediaDevices.getUserMedia({ video: true, audio: true })
     .then(stream => {
+      //placeholder video handle
+      document.getElementById("remote-video").classList.remove("hidden");
+      document.getElementById("remote-video-image").classList.add("hidden");
+
       currentCall = peer.call(connectToPeerId, stream); // Initiate the call with the remote peer
       currentCall.on('stream', handleStream); // Event listener for the incoming stream
       streamSenderVideo = currentCall.peerConnection.getSenders().find((s) => s.track.kind === stream.getVideoTracks()[0].kind);
@@ -226,6 +240,9 @@ function startVideoCall() {
 
   navigator.mediaDevices.getUserMedia({ video: true, audio: false })
     .then(stream => {
+      document.getElementById("local-video").classList.remove("hidden");
+      document.getElementById("local-video-image").classList.add("hidden");
+
       localStream = stream;
       localVideo.srcObject = stream;
     })
@@ -243,6 +260,7 @@ function handleData(data) {
   if (data === '|video-call-request') {
     // Handle the received video call request
     if (confirm('Incoming video call. Do you want to accept?')) {
+      
       conn.send('|video-call-accept'); // Send an acceptance message to the remote peer
     } else {
       conn.send('|video-call-reject'); // Send a rejection message to the remote peer
@@ -260,9 +278,25 @@ function handleData(data) {
     connectButton.disabled = false; // Enable the "Connect" button
     isConnecting = false;
   } else if (data === '|share-screen-start') {
+    if(!isRemoteOn){
+      document.getElementById("remote-video").classList.remove("hidden");
+      document.getElementById("remote-video-image").classList.add("hidden");
+    }
     isOtherUserSharingScreen = true;
   } else if (data === '|share-screen-stop') {
+    if(!isRemoteOn){
+      document.getElementById("remote-video").classList.add("hidden");
+      document.getElementById("remote-video-image").classList.remove("hidden");
+    }
     isOtherUserSharingScreen = false;
+  } else if (data === '|video-on'){
+    isRemoteOn = true;
+    document.getElementById("remote-video").classList.remove("hidden");
+    document.getElementById("remote-video-image").classList.add("hidden");
+  } else if (data === '|video-off'){
+    isRemoteOn = false;
+    document.getElementById("remote-video").classList.add("hidden");
+    document.getElementById("remote-video-image").classList.remove("hidden");
   }
 }
 
@@ -278,7 +312,7 @@ if (connectToPeerId && myPeerId) {
   peer = new Peer(myPeerId, {
     host: "/",
     path: "/peerjs/myapp",
-    //port: 3000
+    port: 3000
   });
 
   if (myPeerId < connectToPeerId) {
@@ -290,7 +324,7 @@ else {
   peer = new Peer({
     host: "/",
     path: "/peerjs/myapp",
-    //port: 3000
+    port: 3000
   });
 }
 
@@ -319,6 +353,9 @@ peer.on('call', call => {
   navigator.mediaDevices
     .getUserMedia({ video: true, audio: true })
     .then((stream) => {
+      document.getElementById("remote-video").classList.remove("hidden");
+      document.getElementById("remote-video-image").classList.add("hidden");
+
       call.answer(stream); // Answer the call with an A/V stream.
       call.on("stream", handleStream);
       streamSenderVideo = currentCall.peerConnection.getSenders().find((s) => s.track.kind === stream.getVideoTracks()[0].kind);
@@ -331,6 +368,9 @@ peer.on('call', call => {
   navigator.mediaDevices
     .getUserMedia({ video: true, audio: false })
     .then((stream) => {
+      document.getElementById("local-video").classList.remove("hidden");
+      document.getElementById("local-video-image").classList.add("hidden");
+      
       localStream = stream;
       localVideo.srcObject = stream;
     })

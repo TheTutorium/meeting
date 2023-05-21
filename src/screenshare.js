@@ -18,6 +18,10 @@ let shareScreen = () => {
       screenShareClicked();
       screenStream = stream;
 
+      
+      document.getElementById("local-video").classList.remove("hidden");
+      document.getElementById("local-video-image").classList.add("hidden");
+
       // Listen for "ended" event on the screen sharing track
       const screenTrack = screenStream.getVideoTracks()[0];
       screenTrack.addEventListener("ended", handleScreenShareEnded);
