@@ -37,15 +37,15 @@
     <button id="connectButton" class="ui button hidden">
       Connect
     </button>
-    <div style="display: inline-block;display: flex; flex-wrap: nowrap;">
+    <div style="display: inline-block;display: flex; flex-wrap: nowrap; justify-content: center; align-items: center;">
       <div id="video-container1" class="video-container1 video-container1Chat">
         <video id="remote-video" class="videoCam videoCamChat" autoplay></video>
-        <span></span>
+        <button id="full-screen-button" class="tool huge circular ui icon button hidden" onclick="openFullscreen(document.getElementById('video-container1'));"><i id="full-screen-icon" class="expand icon"></i></button>
       </div>
       <div id="video-container2" class="video-container2 video-container2Chat">
         <video id="local-video" class="videoCam videoCamChat" autoplay></video>
-        <span></span>
       </div>
+
     </div>
     <div>
         <div id="interactive-0" class="white-board hidden"></div>
@@ -116,7 +116,7 @@
           <i class="download icon"></i> 
         </button>
         <button id="reset-button" onclick="resetWhiteboard()" class="tool medium  circular ui icon button hidden">
-          <i class="redo alternate icon"></i>
+          <i class="undo alternate icon"></i>
         </button>
         <button id="prev_page" class="tool medium circular ui icon button hidden">
           <i class="arrow left icon"></i> 
