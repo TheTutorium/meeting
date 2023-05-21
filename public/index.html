@@ -33,30 +33,33 @@
     <script src="/screenshare.js" type="module"></script>
   </head>
   <body>
-    <div id="video-container1" >
-      <video id="remote-video" class="videoCam" autoplay></video>
+
+    <button id="connectButton" class="ui button hidden">
+      Connect
+    </button>
+
+    <div id="video-container" class="video-container1 video-container1Whiteboard">
+      <video id="remote-video" class="videoCam videoCamWhiteboard" autoplay></video>
     </div>
-    <div id="video-container2" >
-      <video id="local-video" class="videoCam" autoplay></video>
+    <div id="video-container" class="video-container2 video-container1Whiteboard">
+      <video id="local-video" class="videoCam videoCamWhiteboard" autoplay></video>
     </div>
     <div>
-      <div>
         <div id="interactive-0" class="white-board"></div>
-        <div  id="interactive-1" class="hidden">
+        <div  id="interactive-1" class="pdfView hidden">
           <canvas id="pdf_canvas"></canvas>
         </div>
-      </div>
-      
     </div>
+    
     <div id="tools-0" class="tools"> 
       <div class="toolsbar ui compact segment" style="display: inline-block;">
-        <button id="toggle-microphone" onclick="toggleMicrophoneOrVideo(true,false)" class="tool large circular ui icon button">
+        <button id="toggle-microphone" onclick="toggleMicrophoneOrVideo(true,false)" class="tool medium circular ui icon button">
           <i id="toggle-microphone-icon" class="microphone icon"></i>
         </button>
-        <button id="toggle-video" onclick="toggleMicrophoneOrVideo(false,true)" class="tool large circular ui icon button">
+        <button id="toggle-video" onclick="toggleMicrophoneOrVideo(false,true)" class="tool medium circular ui icon button">
           <i id="toggle-video-icon" class="video icon"></i>
         </button>
-        <button id="tool-button-0" onclick="changePenType(0)" class="tool large  circular ui icon bottom left pointing dropdown button selected-button">
+        <button id="tool-button-0" onclick="changePenType(0)" class="tool medium  circular ui icon bottom left pointing dropdown button">
           <i class="pen icon"></i>
           <div class="menu">
             <div class="header" style="font-size: 13px;">Size</div>
@@ -73,7 +76,7 @@
           </div>
         </button>
 
-        <button id="tool-button-1" onclick="changePenType(1)" class="tool large  circular ui icon bottom left pointing dropdown button selected-button">
+        <button id="tool-button-1" onclick="changePenType(1)" class="tool medium circular ui icon bottom left pointing dropdown button">
           <i class="eraser icon"></i>
           <div class="menu">
             <div class="header" style="font-size: 13px;">Size</div>
@@ -83,7 +86,7 @@
             <div class="item" style="font-size: 13px;" data-value="2">Small</div>
           </div>
         </button>
-        <button id="tool-button-2" onclick="changePenType(2)" class="tool large  circular ui icon bottom left pointing dropdown button selected-button">
+        <button id="tool-button-2" onclick="changePenType(2)" class="tool medium  circular ui icon bottom left pointing dropdown button">
           <i class="font icon"></i>
           <div class="menu">
             <div class="header" style="font-size: 13px;">Size</div>
@@ -99,55 +102,48 @@
             <div class="item" style="font-size: 13px;" data-value="0x0000ff"><div class="ui blue empty circular label"></div>Blue</div>
           </div>
         </button>
-
-        <input type="file" id="file-input" style="display: none;">
-        <button id="tool-button-3" onclick="changePenType(3); document.getElementById('file-input').click();" class="tool large  circular ui icon button">
-          <i class="upload icon"></i>
-        </button>
-        <button id="tool-button-4" onclick="changePenType(4)" class="tool large  circular ui icon button">
+        <button id="tool-button-4" onclick="changePenType(4)" class="tool medium  circular ui icon button">
           <i class="hand pointer icon"></i>
         </button>
-        <button id="reset-button" onclick="resetWhiteboard()" class="tool large  circular ui icon button">
-          <i class="redo alternate icon"></i>
-        </button>
-        
-        <button id="save-button" onclick="saveWhiteboard()" class="tool large circular ui icon button">
+        <input type="file" id="file-input" style="display: none;">
+        <button id="tool-button-3" onclick="changePenType(3); document.getElementById('file-input').click();" class="tool medium  circular ui icon button">
+          <i class="file image icon"></i>
+        </button>        
+        <button id="save-button" onclick="saveWhiteboard()" class="tool medium circular ui icon button">
           <i class="download icon"></i> 
         </button>
-        <button id="prev_page" class="tool large circular ui icon button hidden">
+        <button id="reset-button" onclick="resetWhiteboard()" class="tool medium  circular ui icon button">
+          <i class="redo alternate icon"></i>
+        </button>
+        <button id="prev_page" class="tool medium circular ui icon button hidden">
           <i class="arrow left icon"></i> 
         </button>
         <div id="page_input" class="ui input hidden">
           <input id="page_input_text" type="text" placeholder="0/0">
         </div>
-        <button id="next_page" class="tool large circular ui icon button hidden">
+        <button id="next_page" class="tool medium circular ui icon button hidden">
           <i class="arrow right icon"></i> 
         </button>
         <input type="file" id="pdf-input" style="display: none;">
-        <button id="upload-pdf" onclick="document.getElementById('pdf-input').click()" class="tool large  circular ui icon button hidden">
+        <button id="upload-pdf" onclick="document.getElementById('pdf-input').click()" class="tool medium  circular ui icon button hidden">
           <i class="upload icon"></i>  
         </button>
-        <button id="pdf-tool-button-0" onclick="shotImage()" class="tool large circular ui icon button hidden">
+        <button id="pdf-tool-button-0" onclick="shotImage()" class="tool medium circular ui icon button hidden">
           <i class="edit icon"></i> 
         </button>
-        <button id="screen-options-button" class="tool large  circular ui icon bottom left pointing dropdown button">
+        <button id="screen-options-button" class="tool medium  circular ui icon bottom left pointing dropdown button">
           <i class="ellipsis vertical icon"></i>
           <div class="menu">
+            <div class="item" style="font-size: 13px;" onclick="chatView()"><i class="interactive-button comments icon"></i>Chat</div>
             <div class="item" style="font-size: 13px;" onclick="whiteboardClicked()"><i class="interactive-button chalkboard teacher icon"></i>Whiteboard</div>
             <div class="item" style="font-size: 13px;" onclick="pdfviewClicked()"><i class="interactive-button file pdf icon"></i>Share PDF</div>
             <div class="item" style="font-size: 13px;" onclick="shareScreen()"><i class="desktop icon"></i>Share Screen</div>
           </div>
         </button>
-        <button id="disconnectButton" class="tool red large circular ui icon button" disabled>
+        <button id="disconnectButton" class=" red medium circular ui icon button" disabled>
           <i class="phone slash icon"></i>
         </button>
       </div>
-    </div>
-    <div style="display: flex; justify-content: center;">
-      <input type="text" id="connect-to-peer" placeholder="Enter Peer ID" ></input>
-      <button id="connectButton" class="ui button">
-        Connect
-      </button>
     </div>
   </body>
   

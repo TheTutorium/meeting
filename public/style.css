@@ -1,6 +1,7 @@
 body {
-    padding: 5% !important;
+    padding: 4vw !important;
     background: #35363A !important;
+    font-family: 'Roboto', sans-serif; 
 }
 
 .white-board {
@@ -12,24 +13,26 @@ body {
 .videoCam{
     border: 4px solid #202124;
     border-radius: 20px !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.videoCamWhiteboard{
     height: 18vw;
 }
 
-#video-container1{
+.video-container1, .video-container2{
+
+}
+
+.video-container1Whiteboard, .video-container2Whiteboard{
     position: fixed;
     bottom: 0;
-    left: 0;
     z-index: 9999;
     padding: 2vw;
 }
 
-#video-container2{
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    z-index: 9999;
-    padding: 2vw;
-}
+.video-container1 { left: 0; }
+.video-container2 { right: 0; }
 
 .shared-screen {
     position: absolute;
@@ -38,26 +41,17 @@ body {
     width: 25%;
     height: auto;
     z-index: 9999;
-  }
-
-.hidden {
-    display: none !important;
 }
+
+.hidden { display: none !important; }
 
 .white-board canvas {
     border: 4px solid orange;
     border-radius: 20px !important;
-
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-.selected-button{
-        
-}
-
-.selected-interactive-button{
-    background-color: darkblue;
-        color: white;
-}
+.selected-button{ background-color: #8AB4F8 !important; }
 
 .tool-additionals{
     display: flex;
@@ -65,41 +59,38 @@ body {
     flex-direction: column;
 }
 
-#video-container video {
-    margin: 3vh 3vw;
-    height: 28vh;
-}
-
 .tools {
+    position: fixed;
+    bottom: 0;
     display: flex;
-    justify-content: center;
-    margin: 3vh 3vw;
+    justify-content: center; /* Centers child elements on the line */
+    align-items: center;
+    padding: 4vw;
+    margin-left: -5vw;
+    width: 100%; /* New property added to span the full width of the viewport */
 }
 
 .toolsbar {
     border-radius: 20px !important;
     background: #202124 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-
-#interactive-selection{
-    display: flex;
+.pdfView {
+    display: flex; 
     justify-content: center;
+    padding-bottom: 6vw;
 }
 
 .tool {
     margin: 2vh 2vw;
+    transition: background 0.3s ease !important;
+}
+.tool:hover {
+    background: #B4B4B4 !important; /* Change background color on hover */
 }
 
-.interactive-button {
-    margin: 1vh 1vw;
-}
-
-#sample-text{
-    margin: 3pt;
-    border: 1px solid black; /* add a border */
-    padding: 10px; /* add padding */
-}
+.interactive-button { margin: 1vh 1vw; }
 
 #toolbar {
     display: flex;
@@ -117,31 +108,13 @@ body {
     display: flex;
 }
 
-#toolbar li {
-    margin: 0 2vw;
-}
+#toolbar li { margin: 0 2vw; }
+#toolbar a { color: #fff; text-decoration: none; }
 
-#toolbar a {
-    color: #fff;
-    text-decoration: none;
-}
-
-/* Adjust styles for smaller screens */
 @media (max-width: 600px) {
-    #toolbar {
-        flex-direction: column;
-    }
-
-    #toolbar ul {
-        flex-direction: column;
-    }
-
-    #toolbar li {
-        margin: 10px 0;
-    }
+    #toolbar { flex-direction: column; }
+    #toolbar ul { flex-direction: column; }
+    #toolbar li { margin: 10px 0; }
 }
 
-.input {
-    width: 90px;
-    margin-right: 5px;
-}
+.input { width: 90px; margin-right: 5px; }
