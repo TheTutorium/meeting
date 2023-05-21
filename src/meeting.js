@@ -278,7 +278,7 @@ if (connectToPeerId && myPeerId) {
   peer = new Peer(myPeerId, {
     host: "/",
     path: "/peerjs/myapp",
-    //port: 3000
+    port: 3000
   });
 
   if (myPeerId < connectToPeerId) {
@@ -290,7 +290,7 @@ else {
   peer = new Peer({
     host: "/",
     path: "/peerjs/myapp",
-    //port: 3000
+    port: 3000
   });
 }
 

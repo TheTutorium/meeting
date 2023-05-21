@@ -133,8 +133,8 @@ const textColorSelect = document.getElementById("text-color");
 const app = new PIXI.Application({
     antialias: true,
     background: "#ffffff",
-    width: window.innerWidth * 0.5,
-    height: window.innerHeight * 0.5,
+    width: window.innerWidth * 0.45,
+    height: window.innerHeight * 0.6,
 });
 
 /*
@@ -203,25 +203,38 @@ fileInput.addEventListener('change', (event) => {
 
 // Define the 'onCanvasScroll' function
 function onCanvasScroll(event) {
-    // Get the scroll direction
-    const delta = Math.sign(event.deltaY) * SCALE_CONST;
 
-    // Do something with the scroll direction
-    //console.log(app.view.width);
+    // Check if the Ctrl key is pressed
+    if (event.ctrlKey) {
+        event.preventDefault(); // Prevent default scrolling behavior
 
-    var middlePoint = transformPoint(app.view.width / 2, app.view.height / 2);
-    //console.log(stage.position);
-    //console.log(canvas_scale);
+        // Adjust the canvas size based on the scroll direction
+        const scaleFactor = event.deltaY > 0 ? 0.9 : 1.1;
+        canvas.width *= scaleFactor;
+        canvas.height *= scaleFactor;
+    }else{
+        // Get the scroll direction
+        const delta = Math.sign(event.deltaY) * SCALE_CONST;
 
-    const prev_scale = canvas_scale;
+        // Do something with the scroll direction
+        //console.log(app.view.width);
 
-    stage.scale.set(stage.scale.x * (1 - delta));
-    canvas_scale = stage.scale.x;
+        var middlePoint = transformPoint(app.view.width / 2, app.view.height / 2);
+        //console.log(stage.position);
+        //console.log(canvas_scale);
 
-    const translation = { x: middlePoint.x * (canvas_scale - prev_scale), y: middlePoint.y * (canvas_scale - prev_scale) }
+        const prev_scale = canvas_scale;
 
-    canvas_translation = { x: canvas_translation.x + translation.x, y: canvas_translation.y + translation.y };
-    stage.position.set(-canvas_translation.x, -canvas_translation.y);
+        stage.scale.set(stage.scale.x * (1 - delta));
+        canvas_scale = stage.scale.x;
+
+        const translation = { x: middlePoint.x * (canvas_scale - prev_scale), y: middlePoint.y * (canvas_scale - prev_scale) }
+
+        canvas_translation = { x: canvas_translation.x + translation.x, y: canvas_translation.y + translation.y };
+        stage.position.set(-canvas_translation.x, -canvas_translation.y);
+    }
+
+
 
 
 }
