@@ -1,4 +1,5 @@
 import { peer, conn } from './meeting.js';
+import { currentlySharing } from './screenshare.js';
 
 //const fmin = require('./fmin');
 
@@ -370,6 +371,7 @@ export const chatView = () => {
     document.getElementById("interactive-0").className = "white-board hidden";
     document.getElementById("interactive-1").className = "pdfView hidden";
 
+    document.getElementById("screen-options-button").classList.remove("hidden");
     document.getElementById("body").className = "bodyChat";
 
     console.log("in two video");
@@ -406,6 +408,7 @@ const whiteboardClicked = () => {
     document.getElementById("interactive-0").className = "white-board";
     document.getElementById("interactive-1").className = "pdfView hidden";
 
+    document.getElementById("screen-options-button").classList.remove("hidden");
     document.getElementById("body").className = "bodyWhiteboard";
 };
 const pdfviewClicked = () => {
@@ -439,6 +442,7 @@ const pdfviewClicked = () => {
     document.getElementById("interactive-0").className = "white-board hidden";
     document.getElementById("interactive-1").className = "pdfView";
 
+    document.getElementById("screen-options-button").classList.remove("hidden");
     document.getElementById("body").className = "bodyWhiteboard";
 };
 export const screenShareClicked = () => {
@@ -472,6 +476,7 @@ export const screenShareClicked = () => {
     document.getElementById("interactive-0").className = "white-board hidden";
     document.getElementById("interactive-1").className = "pdfView hidden";
 
+    document.getElementById("screen-options-button").classList.add("hidden");
     console.log("in screen share");
 };
 
