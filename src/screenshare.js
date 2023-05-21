@@ -1,5 +1,5 @@
 import { currentCall, sendDataToPeer, streamSenderVideo, streamSenderAudio, toggleMicrophoneOrVideo } from './meeting.js';
-import { screenShareClicked, chatView } from './whiteboard.js';
+import { screenShareClicked, chatView, currentInteractiveTool, setCurrentInteractiveTool } from './whiteboard.js';
 
 let screenStream = null; // Variable to store the screen sharing stream
 export let currentlySharing = false;
@@ -7,7 +7,7 @@ export let currentlySharing = false;
 let shareScreen = () => {
 
   // If the user is already sharing their screen, do nothing
-  if (currentlySharing) {
+  if (currentlySharing || currentInteractiveTool == 2) {
     return;
   }
 
@@ -41,6 +41,8 @@ function handleScreenShareEnded(event) {
   // Replace the video track of the peer connection sender with the camera video track
   // Store the camera video stream
   toggleMicrophoneOrVideo(false, false);
+  setCurrentInteractiveTool(-2);
+  
   chatView();
 
   // make video button in index.html hidden

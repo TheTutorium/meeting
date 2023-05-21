@@ -285,7 +285,12 @@ var mousePosRef;
 
 
 /// nexttt
-let currentInteractiveTool = -1;
+export let currentInteractiveTool = -1;
+
+export function setCurrentInteractiveTool(tool){
+    currentInteractiveTool = tool;
+    conn.send("-4|" + tool);
+}
 
 export const changeInteractiveTool = (tool) => {
 
@@ -341,9 +346,14 @@ function removeSelect() {
 
 export const chatView = () => {
 
-    if(currentInteractiveTool == -1){
+    if(currentInteractiveTool == -1 || currentInteractiveTool == 2){
         return;
     }
+
+    if(currentInteractiveTool == -2){
+        currentInteractiveTool = 2;
+    }
+    console.log("entered");
 
     changeInteractiveTool(-1);
 
@@ -371,14 +381,13 @@ export const chatView = () => {
     document.getElementById("interactive-0").className = "white-board hidden";
     document.getElementById("interactive-1").className = "pdfView hidden";
 
-    document.getElementById("screen-options-button").classList.remove("hidden");
     document.getElementById("body").className = "bodyChat";
 
     console.log("in two video");
 };
 
 const whiteboardClicked = () => {
-    if(currentInteractiveTool == 0){
+    if(currentInteractiveTool == 0 || currentInteractiveTool == 2){
         return;
     }
 
@@ -408,11 +417,10 @@ const whiteboardClicked = () => {
     document.getElementById("interactive-0").className = "white-board";
     document.getElementById("interactive-1").className = "pdfView hidden";
 
-    document.getElementById("screen-options-button").classList.remove("hidden");
     document.getElementById("body").className = "bodyWhiteboard";
 };
 const pdfviewClicked = () => {
-    if(currentInteractiveTool == 1){
+    if(currentInteractiveTool == 1 || currentInteractiveTool == 2){
         return;
     }
 
@@ -442,7 +450,6 @@ const pdfviewClicked = () => {
     document.getElementById("interactive-0").className = "white-board hidden";
     document.getElementById("interactive-1").className = "pdfView";
 
-    document.getElementById("screen-options-button").classList.remove("hidden");
     document.getElementById("body").className = "bodyWhiteboard";
 };
 export const screenShareClicked = () => {
@@ -476,7 +483,6 @@ export const screenShareClicked = () => {
     document.getElementById("interactive-0").className = "white-board hidden";
     document.getElementById("interactive-1").className = "pdfView hidden";
 
-    document.getElementById("screen-options-button").classList.add("hidden");
     console.log("in screen share");
 };
 
@@ -1802,6 +1808,7 @@ export function handleWhiteboardData(data) {
                 screenShareClicked();
                 break;
             default:
+                currentInteractiveTool = curInteractiveTool;
                 break;
         }
     }
