@@ -1005,9 +1005,6 @@ const onMouseDown = (e) => {
 
         p_text.x = space_pos.x;
         p_text.y = space_pos.y;
-        //text.moveTo(initPointer.x, initPointer.y);
-
-        //p_text.moveTo(p_text.x + canvas_translation.x, p_text.y + canvas_translation.y);
 
         stage.addChild(p_text);
         writing_on_board = true;
@@ -1271,13 +1268,25 @@ document.addEventListener("keydown", (event) => {
     if (writing_on_board) {
         const alphanumericKey = /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/.test(event.key);
         //console.log(event.key);
-        if (event.key.localeCompare("Enter") === 0) {
+        console.log(event.key);
+        if (event.shiftKey && (event.key.localeCompare("Enter") === 0)) {
+            if (cursor_added) {
+                removeCursor();
+            }
+            p_text.text += "\n";
+            // Perform your desired action here
+        }else if (event.key.localeCompare("Enter") === 0) {
             //Send Text
             sendTextToConn();
             changeCursor('text-cursor');
 
 
             writing_on_board = false;
+        }else if(event.key.localeCompare("Backspace") === 0 && event.key.length > 0){
+            if (cursor_added) {
+                removeCursor();
+            }
+            p_text.text = p_text.text.substring(0, p_text.text.length - 1);
         }
         else if (alphanumericKey && event.key.length === 1) {
             if (cursor_added) {
