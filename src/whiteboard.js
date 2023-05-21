@@ -26,7 +26,7 @@ const MAX_MERR = 1;
 var pen_size = 2;
 var pen_color = "0x000000";
 var eraser_size = 32;
-var text_size = 14;
+var text_size = 18;
 var text_color = "0x000000";
 
 var fulScreenMode = 0;
@@ -78,10 +78,16 @@ $('#tool-button-0').dropdown({
     on: 'nothing', // disable opening on hover and left click
     onChange: function(value, text, $selectedItem) {
       // changing the value of pen_size based on the selection
-      if (value.charAt(0) != '0')
-        pen_size = parseInt(value);
-      else
-        pen_color = parseInt(value);
+        if (value.charAt(0) != '0') {
+            document.getElementById('pen-size-'+pen_size).className = 'item';
+            pen_size = parseInt(value);
+            document.getElementById('pen-size-'+pen_size).className = 'item disabled';
+        }
+        else {
+            document.getElementById('pen-color-'+pen_color).className = 'item';
+            pen_color = value;
+            document.getElementById('pen-color-'+pen_color).className = 'item disabled';
+        }
     }
   });
 $('#tool-button-0').on('contextmenu', function(event) {
@@ -93,7 +99,9 @@ $('#tool-button-1').dropdown({
     on: 'nothing', // disable opening on hover and left click
     onChange: function (value, text, $selectedItem) {
         // changing the value of pen_size based on the selection
+        document.getElementById('eraser-size-'+eraser_size).className = 'item';
         eraser_size = parseInt(value);
+        document.getElementById('eraser-size-'+eraser_size).className = 'item disabled';
     }
 });
 $('#tool-button-1').on('contextmenu', function(event) {
@@ -111,8 +119,9 @@ $('#tool-button-2').dropdown({
                 writing_on_board = false;
                 changeCursor('text-cursor');
             }
-
+            document.getElementById('text-size-'+text_size).className = 'item';
             text_size = parseInt(value);
+            document.getElementById('text-size-'+text_size).className = 'item disabled';
         }
         else {
             if (writing_on_board) {
@@ -120,8 +129,9 @@ $('#tool-button-2').dropdown({
                 changeCursor('text-cursor');
                 writing_on_board = false;
             }
-
-            text_color = parseInt(value);
+            document.getElementById('text-color-'+text_color).className = 'item';
+            text_color = value;
+            document.getElementById('text-color-'+text_color).className = 'item disabled';
         }
     }
 });

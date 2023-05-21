@@ -66,16 +66,16 @@
           <i class="pen icon"></i>
           <div class="menu">
             <div class="header" style="font-size: 13px;">Size</div>
-            <div class="item" style="font-size: 13px;" data-value="8">Huge</div>
-            <div class="item" style="font-size: 13px;" data-value="4">Large</div>
-            <div class="item" style="font-size: 13px;" data-value="2">Medium</div>
-            <div class="item" style="font-size: 13px;" data-value="1">Small</div>
+            <div id="pen-size-8" class="item" style="font-size: 13px;" data-value="8">Huge</div>
+            <div id="pen-size-4" class="item" style="font-size: 13px;" data-value="4">Large</div>
+            <div id="pen-size-2" class="item disabled" style="font-size: 13px;" data-value="2">Medium</div>
+            <div id="pen-size-1" class="item" style="font-size: 13px;" data-value="1">Small</div>
             <div class="ui divider" style="font-size: 13px;"></div>
             <div class="header"  style="font-size: 13px;">Color</div>
-            <div class="item" style="font-size: 13px;" data-value="0x000000"><div class="ui black empty circular label"></div>Black</div>
-            <div class="item" style="font-size: 13px;" data-value="0xff0000"><div class="ui red empty circular label"></div>Red</div>
-            <div class="item" style="font-size: 13px;" data-value="0x00ff00"><div class="ui green empty circular label"></div>Green</div>
-            <div class="item" style="font-size: 13px;" data-value="0x0000ff"><div class="ui blue empty circular label"></div>Blue</div>
+            <div id="pen-color-0x000000" class="item disabled" style="font-size: 13px;" data-value="0x000000"><div class="ui black empty circular label"></div>Black</div>
+            <div id="pen-color-0xff0000" class="item" style="font-size: 13px;" data-value="0xff0000"><div class="ui red empty circular label"></div>Red</div>
+            <div id="pen-color-0x00ff00" class="item" style="font-size: 13px;" data-value="0x00ff00"><div class="ui green empty circular label"></div>Green</div>
+            <div id="pen-color-0x0000ff" class="item" style="font-size: 13px;" data-value="0x0000ff"><div class="ui blue empty circular label"></div>Blue</div>
           </div>
         </button>
 
@@ -83,26 +83,26 @@
           <i class="eraser icon"></i>
           <div class="menu">
             <div class="header" style="font-size: 13px;">Size</div>
-            <div class="item" style="font-size: 13px;" data-value="64">Huge</div>
-            <div class="item" style="font-size: 13px;" data-value="32">Large</div>
-            <div class="item" style="font-size: 13px;" data-value="16">Medium</div>
-            <div class="item" style="font-size: 13px;" data-value="8">Small</div>
+            <div id="eraser-size-64" class="item" style="font-size: 13px;" data-value="64">Huge</div>
+            <div id="eraser-size-32" class="item disabled" style="font-size: 13px;" data-value="32">Large</div>
+            <div id="eraser-size-16" class="item" style="font-size: 13px;" data-value="16">Medium</div>
+            <div id="eraser-size-8" class="item" style="font-size: 13px;" data-value="8">Small</div>
           </div>
         </button>
         <button id="tool-button-2" onclick="changePenType(2)" class="tool medium  circular ui icon bottom left pointing dropdown button hidden">
           <i class="font icon"></i> 
           <div class="menu">
             <div class="header" style="font-size: 13px;">Size</div>
-            <div class="item" style="font-size: 13px;" data-value="32">Huge</div>
-            <div class="item" style="font-size: 13px;" data-value="24">Large</div>
-            <div class="item" style="font-size: 13px;" data-value="18">Medium</div>
-            <div class="item" style="font-size: 13px;" data-value="12">Small</div>
+            <div id="text-size-32" class="item " style="font-size: 13px;" data-value="32">Huge</div>
+            <div id="text-size-24" class="item" style="font-size: 13px;" data-value="24">Large</div>
+            <div id="text-size-18" class="item disabled" style="font-size: 13px;" data-value="18">Medium</div>
+            <div id="text-size-12" class="item" style="font-size: 13px;" data-value="12">Small</div>
             <div class="ui divider" style="font-size: 13px;"></div>
             <div class="header"  style="font-size: 13px;">Color</div>
-            <div class="item" style="font-size: 13px;" data-value="0x000000"><div class="ui black empty circular label"></div>Black</div>
-            <div class="item" style="font-size: 13px;" data-value="0xff0000"><div class="ui red empty circular label"></div>Red</div>
-            <div class="item" style="font-size: 13px;" data-value="0x00ff00"><div class="ui green empty circular label"></div>Green</div>
-            <div class="item" style="font-size: 13px;" data-value="0x0000ff"><div class="ui blue empty circular label"></div>Blue</div>
+            <div id="text-color-0x000000" class="item disabled" style="font-size: 13px;" data-value="0x000000"><div class="ui black empty circular label"></div>Black</div>
+            <div id="text-color-0xff0000" class="item" style="font-size: 13px;" data-value="0xff0000"><div class="ui red empty circular label"></div>Red</div>
+            <div id="text-color-0x00ff00" class="item" style="font-size: 13px;" data-value="0x00ff00"><div class="ui green empty circular label"></div>Green</div>
+            <div id="text-color-0x0000ff" class="item" style="font-size: 13px;" data-value="0x0000ff"><div class="ui blue empty circular label"></div>Blue</div>
           </div>
         </button>
         <button id="tool-button-4" onclick="changePenType(4)" class="tool medium  circular ui icon button hidden">
