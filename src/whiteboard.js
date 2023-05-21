@@ -168,8 +168,8 @@ container.appendChild(app.view);
 
 // Get the canvas element
 const canvas = app.view;
-canvas.width *= 0.45;
-canvas.height *= 0.6;
+canvas.width *= 0.6;
+canvas.height *= 0.8;
 
 // Add a 'wheel' event listener to the canvas
 canvas.addEventListener('wheel', onCanvasScroll);
@@ -1584,10 +1584,12 @@ const shotImage = () => {
     // Get the iframe element
     current_image = pdf_canvas.toDataURL();
     console.log(current_image);
-    changePenType(3);
+    
     have_file = true;
-    changeCursor("image-add-cursor");
+    
     whiteboardClicked();
+    changePenType(3);
+    changeCursor("image-add-cursor");
 
 }
 
