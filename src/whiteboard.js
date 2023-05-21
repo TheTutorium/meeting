@@ -271,13 +271,12 @@ let currentInteractiveTool = 0;
 
 export const changeInteractiveTool = (tool) => {
 
+    currentPenType = -1;
+    
+
     console.log(tool + " prev " + currentInteractiveTool);
 
-    const prevTools = document.querySelector(`#interactive-${currentInteractiveTool}`);
-    prevTools.classList.add('hidden');
-
-    const currTools = document.querySelector(`#interactive-${tool}`);
-    currTools.classList.remove('hidden');
+    conn.send("-4|" + tool);
 
     currentInteractiveTool = tool;
 
@@ -286,6 +285,8 @@ export const changeInteractiveTool = (tool) => {
         sendTextToConn();
         changeCursor('text-cursor');
     }
+
+    changeCursor("default-cursor");
 
     writing_on_board = false;
 
@@ -323,8 +324,29 @@ export const chatView = () => {
         return;
     }
 
-    conn.send("-4|-1");
-    currentInteractiveTool = -1;
+    changeInteractiveTool(-1);
+
+    penButton.classList.add('hidden');
+    eraserButton.classList.add('hidden');
+    textButton.classList.add('hidden');
+    uploadImgButton.classList.add('hidden');
+    selectButton.classList.add('hidden');
+    resetButton.classList.add('hidden');
+    downloadButton.classList.add('hidden');
+
+    leftButton.classList.add('hidden');
+    pageField.classList.add('hidden');
+    rightButton.classList.add('hidden');
+    uploadPdfButton.classList.add('hidden');
+    edditButton.classList.add('hidden');
+
+    document.getElementById("video-container1").className = "video-container1";
+    document.getElementById("video-container2").className = "video-container2";
+    document.getElementById("remote-video").className = "videoCam";
+    document.getElementById("local-video").className = "videoCam";
+
+    document.getElementById("interactive-0").className = "white-board hidden";
+    document.getElementById("interactive-1").className = "pdfView hidden";
 
     console.log("in two video");
 };
@@ -333,8 +355,6 @@ const whiteboardClicked = () => {
     if(currentInteractiveTool == 0){
         return;
     }
-        
-    conn.send("-4|0");
 
     changeInteractiveTool(0);
     
@@ -351,13 +371,19 @@ const whiteboardClicked = () => {
     rightButton.classList.add('hidden');
     uploadPdfButton.classList.add('hidden');
     edditButton.classList.add('hidden');
+
+    document.getElementById("video-container1").className = "video-container1 video-container1Whiteboard";
+    document.getElementById("video-container2").className = "video-container2 video-container2Whiteboard";
+    document.getElementById("remote-video").className = "videoCam videoCamWhiteboard";
+    document.getElementById("local-video").className = "videoCam videoCamWhiteboard";
+
+    document.getElementById("interactive-0").className = "white-board";
+    document.getElementById("interactive-1").className = "pdfView hidden";
 };
 const pdfviewClicked = () => {
     if(currentInteractiveTool == 1){
         return;
     }
-
-    conn.send("-4|1");
 
     changeInteractiveTool(1);
 
@@ -374,14 +400,43 @@ const pdfviewClicked = () => {
     rightButton.classList.remove('hidden');
     uploadPdfButton.classList.remove('hidden');
     edditButton.classList.remove('hidden');
+
+    document.getElementById("video-container1").className = "video-container1 video-container1Whiteboard";
+    document.getElementById("video-container2").className = "video-container2 video-container2Whiteboard";
+    document.getElementById("remote-video").className = "videoCam videoCamWhiteboard";
+    document.getElementById("local-video").className = "videoCam videoCamWhiteboard";
+
+    document.getElementById("interactive-0").className = "white-board hidden";
+    document.getElementById("interactive-1").className = "pdfView";
 };
 export const screenShareClicked = () => {
     if(currentInteractiveTool == 2){
         return;
     }
 
-    conn.send("-4|2");
-    currentInteractiveTool = 2;
+    changeInteractiveTool(2);
+
+    penButton.classList.add('hidden');
+    eraserButton.classList.add('hidden');
+    textButton.classList.add('hidden');
+    uploadImgButton.classList.add('hidden');
+    selectButton.classList.add('hidden');
+    resetButton.classList.add('hidden');
+    downloadButton.classList.add('hidden');
+
+    leftButton.classList.add('hidden');
+    pageField.classList.add('hidden');
+    rightButton.classList.add('hidden');
+    uploadPdfButton.classList.add('hidden');
+    edditButton.classList.add('hidden');
+
+    document.getElementById("video-container1").className = "video-container1";
+    document.getElementById("video-container2").className = "video-container2";
+    document.getElementById("remote-video").className = "videoCam";
+    document.getElementById("local-video").className = "videoCam";
+
+    document.getElementById("interactive-0").className = "white-board hidden";
+    document.getElementById("interactive-1").className = "pdfView hidden";
 
     console.log("in screen share");
 };
@@ -390,7 +445,7 @@ export const screenShareClicked = () => {
 window.changeInteractiveTool = changeInteractiveTool;
 window.whiteboardClicked = whiteboardClicked;
 window.pdfviewClicked = pdfviewClicked;
-
+window.chatView = chatView;
 
 // Whiteboard Part
 
@@ -425,7 +480,7 @@ export let currentZIndex = 0;
 export function setCurrentZIndex(newValue) {
     currentZIndex = newValue;
 }
-let currentPenType = 0;
+let currentPenType = -1;
 
 function changeCursor(newCursor){
     canvas.classList.remove(past_cursor);
@@ -1282,8 +1337,6 @@ container.addEventListener("mouseup", onMouseUp, 0);
 
 let past_cursor = "default-cursor";
 
-canvas.classList.remove(past_cursor);
-canvas.classList.add('pen-cursor');
 
 
 //PDF Share
