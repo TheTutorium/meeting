@@ -24,7 +24,7 @@ const MAX_MERR = 1;
 
 var pen_size = 2;
 var pen_color = "0x000000";
-var eraser_size = 10;
+var eraser_size = 32;
 var text_size = 14;
 var text_color = "0x000000";
 
@@ -282,7 +282,7 @@ var mousePosRef;
 
 
 /// nexttt
-let currentInteractiveTool = 0;
+let currentInteractiveTool = -1;
 
 export const changeInteractiveTool = (tool) => {
 
@@ -355,13 +355,15 @@ export const chatView = () => {
     uploadPdfButton.classList.add('hidden');
     edditButton.classList.add('hidden');
 
-    document.getElementById("video-container1").className = "video-container1";
-    document.getElementById("video-container2").className = "video-container2";
-    document.getElementById("remote-video").className = "videoCam";
-    document.getElementById("local-video").className = "videoCam";
+    document.getElementById("video-container1").className = "video-container1 video-container1Chat";
+    document.getElementById("video-container2").className = "video-container2 video-container2Chat";
+    document.getElementById("remote-video").className = "videoCam videoCamChat";
+    document.getElementById("local-video").className = "videoCam videoCamChat";
 
     document.getElementById("interactive-0").className = "white-board hidden";
     document.getElementById("interactive-1").className = "pdfView hidden";
+
+    document.getElementById("body").className = "bodyChat";
 
     console.log("in two video");
 };
@@ -394,6 +396,8 @@ const whiteboardClicked = () => {
 
     document.getElementById("interactive-0").className = "white-board";
     document.getElementById("interactive-1").className = "pdfView hidden";
+
+    document.getElementById("body").className = "bodyWhiteboard";
 };
 const pdfviewClicked = () => {
     if(currentInteractiveTool == 1){
@@ -423,6 +427,8 @@ const pdfviewClicked = () => {
 
     document.getElementById("interactive-0").className = "white-board hidden";
     document.getElementById("interactive-1").className = "pdfView";
+
+    document.getElementById("body").className = "bodyWhiteboard";
 };
 export const screenShareClicked = () => {
     if(currentInteractiveTool == 2){

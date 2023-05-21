@@ -1,8 +1,21 @@
 body {
-    padding: 4vw !important;
+    padding-left: 4vw !important;
+    padding-right: 4vw !important;
+    padding-top: 4vw !important;
+    padding-bottom: 4vw !important;
     background: #35363A !important;
     font-family: 'Roboto', sans-serif; 
 }
+
+.bodyWhiteboard {
+    padding-left: 4vw !important;
+    padding-right: 4vw !important;
+}
+.bodyChat {
+    padding-left: 3vw !important;
+    padding-right: 3vw !important;
+}
+
 
 .white-board {
     display: flex;
@@ -19,9 +32,16 @@ body {
     height: 18vw;
 }
 
+.videoCamChat{
+    height: 34vw;
+}
+
 .video-container1, .video-container2{
 
 }
+
+.video-container1 { left: 0; }
+.video-container2 { right: 0; }
 
 .video-container1Whiteboard, .video-container2Whiteboard{
     position: fixed;
@@ -30,8 +50,8 @@ body {
     padding: 2vw;
 }
 
-.video-container1 { left: 0; }
-.video-container2 { right: 0; }
+.video-container1Chat { }
+.video-container2Chat { float: left !important; margin-left: 3vw !important;}
 
 .shared-screen {
     position: absolute;
