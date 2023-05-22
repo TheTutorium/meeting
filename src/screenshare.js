@@ -28,11 +28,27 @@ let shareScreen = () => {
       const videoTrack = screenStream.getVideoTracks()[0];
       streamSenderVideo.replaceTrack(videoTrack);
       currentlySharing = true;
+
+      // make screenshare button in index.html show
+      document.getElementById('stopScreenShareButton').classList.remove('hidden');
     })
     .catch((error) => {
       console.error("Error sharing screen:", error);
     });
 };
+
+// stop the screen sharing by button
+export let stopScreenShare = () => {
+  if (screenStream) {
+    screenStream.getTracks().forEach((track) => track.stop());
+
+    // call the handleScreenShareEnded function
+    const screenTrack = screenStream.getVideoTracks()[0];
+    
+    handleScreenShareEnded(screenTrack);
+  }
+};
+window.stopScreenShare = stopScreenShare;
 
 function handleScreenShareEnded(event) {
 
@@ -50,8 +66,13 @@ function handleScreenShareEnded(event) {
 
   // Remove the "ended" event listener
   const screenTrack = event.target;
-  screenTrack.removeEventListener("ended", handleScreenShareEnded);
+  if (screenTrack) {
+    screenTrack.removeEventListener("ended", handleScreenShareEnded);
+  }
   currentlySharing = false;
+
+  // make screenshare button in index.html hidden
+  document.getElementById('stopScreenShareButton').classList.add('hidden');
 }
 
 window.shareScreen = shareScreen;
