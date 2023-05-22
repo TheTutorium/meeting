@@ -129,6 +129,9 @@ function handleDisconnect() {
   if (autoConnect) {
     handleConnect();
   }
+  else {
+    window.location.href = 'https://www.tutoryum.com/'
+  }
 }
 
 // Function to mute the user's microphone and mute the stream that is sent to the remote peer
