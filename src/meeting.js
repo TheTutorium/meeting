@@ -1,5 +1,6 @@
 import { handleWhiteboardData } from "./whiteboard.js";
 import { currentlySharing } from "./screenshare.js";
+import { stopTrackingMicrophone, startTrackingMicrophone } from "./speaktrack.js";
 
 let Peer = window.Peer;
 
@@ -122,6 +123,9 @@ function handleDisconnect() {
   connectButton.disabled = false; // Enable the "Connect" button
   disconnectButton.disabled = true; // Disable the "Disconnect" button
 
+  stopTrackingMicrophone(true);
+  stopTrackingMicrophone(false);
+
   if (autoConnect) {
     handleConnect();
   }
@@ -151,8 +155,28 @@ export const toggleMicrophoneOrVideo = (microphoneToggle, videoToggle) => {
     changeIsUserStreaming(videoOn);
   }
 
-  if ( microphoneToggle && !videoToggle && currentlySharing ) {
+  // OLD VERSION. SAVING FOR REFERENCE
+  // if (microphoneToggle && !videoToggle && currentlySharing) {
+  //   streamSenderAudio.replaceTrack(null);
+  //   return;
+  // }
+
+  if (microphoneToggle && !videoToggle && !microphoneOn) {
+    stopTrackingMicrophone(true);
     streamSenderAudio.replaceTrack(null);
+    return;
+  }
+
+  if (microphoneToggle && !videoToggle && microphoneOn) {
+    navigator.mediaDevices.getUserMedia({ video: false, audio: true })
+      .then(stream => {
+        streamSenderAudio.replaceTrack(stream.getAudioTracks()[0]);
+        stopTrackingMicrophone(true);
+        startTrackingMicrophone(stream, true);
+      })
+      .catch(error => {
+        console.error('Error accessing media devices:', error);
+      });
     return;
   }
 
@@ -169,6 +193,8 @@ export const toggleMicrophoneOrVideo = (microphoneToggle, videoToggle) => {
 
     streamSenderVideo.replaceTrack(null);
     streamSenderAudio.replaceTrack(null);
+
+    stopTrackingMicrophone(true);
     return;
   }
 
@@ -178,6 +204,11 @@ export const toggleMicrophoneOrVideo = (microphoneToggle, videoToggle) => {
       // replace the sender track with the new track
       streamSenderVideo.replaceTrack(stream.getVideoTracks()[0]);
       streamSenderAudio.replaceTrack(stream.getAudioTracks()[0]);
+
+      if (microphoneToggle) {
+        stopTrackingMicrophone(true);
+        startTrackingMicrophone(stream, true);
+      }
     })
     .catch(error => {
       console.error('Error accessing media devices:', error);
@@ -222,6 +253,10 @@ function startVideoCall() {
       currentCall.on('stream', handleStream); // Event listener for the incoming stream
       streamSenderVideo = currentCall.peerConnection.getSenders().find((s) => s.track.kind === stream.getVideoTracks()[0].kind);
       streamSenderAudio = currentCall.peerConnection.getSenders().find((s) => s.track.kind === stream.getAudioTracks()[0].kind);
+
+      // start tracking microphone for the current user
+      stopTrackingMicrophone(true);
+      startTrackingMicrophone(stream, true);
     })
     .catch(error => {
       console.error('Error accessing media devices:', error);
@@ -279,9 +314,10 @@ export let changeIsUserStreaming = (isStreaming) => {
   }
 }
 
-
 // Function to handle the incoming video stream from the remote peer
 function handleStream(stream) {
+  stopTrackingMicrophone(false);
+  startTrackingMicrophone(stream, false);
   remoteVideo.srcObject = stream;
 }
 
@@ -335,6 +371,9 @@ peer.on('call', call => {
       call.on("stream", handleStream);
       streamSenderVideo = currentCall.peerConnection.getSenders().find((s) => s.track.kind === stream.getVideoTracks()[0].kind);
       streamSenderAudio = currentCall.peerConnection.getSenders().find((s) => s.track.kind === stream.getAudioTracks()[0].kind);
+
+      stopTrackingMicrophone(true);
+      startTrackingMicrophone(stream, true);
     })
     .catch((err) => {
       console.error("Failed to get local stream", err);
