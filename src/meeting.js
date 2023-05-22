@@ -264,7 +264,9 @@ function handleData(data) {
     isConnecting = false;
   } else if (data === '|no-stream-from-user') {
     isOtherUserStreaming = false;
+    remoteVideo.classList.add("hidden");
   } else if (data === '|stream-from-user') {
+    remoteVideo.classList.remove("hidden");
     isOtherUserStreaming = true;
   }
 }
