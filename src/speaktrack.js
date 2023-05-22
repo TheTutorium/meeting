@@ -73,12 +73,10 @@ export function startTrackingMicrophone(stream, isCurrentUser) {
             if (isCurrentUser) {
                 isUserSpeaking = true;
                 // TODO YUSUF buralari yesil yap kendi user icin !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-                console.log("Current user is speaking");
             }
             else {
                 isOtherUserSpeaking = true;
                 // TODO YUSUF buralari yesil yap ama karsi taraf konusuyor !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                console.log("Other user is speaking");
             }
         } else {
             if (isCurrentUser) {
