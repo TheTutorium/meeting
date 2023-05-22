@@ -33,17 +33,16 @@
     <script src="/screenshare.js" type="module"></script>
   </head>
   <body id="body" class="bodyChat">
-
     <button id="connectButton" class="ui button hidden">
       Connect
     </button>
     <div style="display: inline-block;display: flex; flex-wrap: nowrap; justify-content: center; align-items: center;">
-      <div id="video-container1" class="video-container1 video-container1Chat">
+      <div id="video-container1" class="video-container1 video-container1NotSpeaking video-container1Chat">
         <video id="remote-video" class="videoCam videoCamChat" autoplay></video>
         <i id="user1-icon" class="user icon userIcon userIconChat"></i>
         <button id="full-screen-button" class="tool huge circular ui icon button hidden" onclick="openFullscreen(document.getElementById('video-container1'));"><i id="full-screen-icon" class="expand icon"></i></button>
       </div>
-      <div id="video-container2" class="video-container2 video-container2Chat">
+      <div id="video-container2" class="video-container2 video-container2NotSpeaking video-container2Chat">
         <video id="local-video" class="videoCam videoCamChat" autoplay></video>
         <i id="user2-icon" class="user icon userIcon userIconChat"></i>
       </div>

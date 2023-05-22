@@ -72,20 +72,24 @@ export function startTrackingMicrophone(stream, isCurrentUser) {
             // User is speaking
             if (isCurrentUser) {
                 isUserSpeaking = true;
-                // TODO YUSUF buralari yesil yap kendi user icin !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+                document.getElementById('video-container2').classList.remove('video-container2NotSpeaking');
+                document.getElementById('video-container2').classList.add('video-container2Speaking');
             }
             else {
                 isOtherUserSpeaking = true;
-                // TODO YUSUF buralari yesil yap ama karsi taraf konusuyor !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                document.getElementById('video-container1').classList.remove('video-container1NotSpeaking');
+                document.getElementById('video-container1').classList.add('video-container1Speaking');
             }
         } else {
             if (isCurrentUser) {
                 isUserSpeaking = false;
-                // TODO YUSUF buralarda artik yesil olmayacak !!!!!!!!!!!!!!!!!!!!!!!!!111
+                document.getElementById('video-container2').classList.remove('video-container2Speaking');
+                document.getElementById('video-container2').classList.add('video-container2NotSpeaking');
             }
             else {
                 isOtherUserSpeaking = false;
-                // TODO YUSUF buralarda artik yesil olmayacak ama karsi taraf icin !!!!!!!!!!!!!!!!!!!!!!!!!111
+                document.getElementById('video-container1').classList.remove('video-container1Speaking');
+                document.getElementById('video-container1').classList.add('video-container1NotSpeaking');
             }
         }
 
