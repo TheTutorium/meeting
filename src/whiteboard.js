@@ -391,6 +391,9 @@ export const chatView = () => {
     document.getElementById("interactive-0").className = "white-board hidden";
     document.getElementById("interactive-1").className = "pdfView hidden";
 
+    document.getElementById("user1-icon").className = "user icon userIcon userIconChat";
+    document.getElementById("user2-icon").className = "user icon userIcon userIconChat";
+
     document.getElementById("body").className = "bodyChat";
 
     console.log("in two video");
@@ -427,6 +430,9 @@ const whiteboardClicked = () => {
     document.getElementById("interactive-0").className = "white-board";
     document.getElementById("interactive-1").className = "pdfView hidden";
 
+    document.getElementById("user1-icon").className = "user icon userIcon userIconWhiteboard";
+    document.getElementById("user2-icon").className = "user icon userIcon userIconWhiteboard";
+
     document.getElementById("body").className = "bodyWhiteboard";
 };
 const pdfviewClicked = () => {
@@ -460,6 +466,9 @@ const pdfviewClicked = () => {
     document.getElementById("interactive-0").className = "white-board hidden";
     document.getElementById("interactive-1").className = "pdfView";
 
+    document.getElementById("user1-icon").className = "user icon userIcon userIconWhiteboard";
+    document.getElementById("user2-icon").className = "user icon userIcon userIconWhiteboard";
+
     document.getElementById("body").className = "bodyWhiteboard";
 };
 export const screenShareClicked = () => {
@@ -492,6 +501,9 @@ export const screenShareClicked = () => {
 
     document.getElementById("interactive-0").className = "white-board hidden";
     document.getElementById("interactive-1").className = "pdfView hidden";
+
+    document.getElementById("user1-icon").className = "user icon userIcon userIconWScreenShare";
+    document.getElementById("user2-icon").className = "user icon userIcon userIconWScreenShare";
 
     console.log("in screen share");
 };

@@ -153,6 +153,7 @@ function handleDisconnect() {
       .catch(error => {
         console.error('Error occurred while sending history data:', error);
       });
+      window.location.href = 'https://www.tutoryum.com/'
   }
 }
 
@@ -354,7 +355,7 @@ checkPath();
 if (connectToPeerId && myPeerId) {
   peer = new Peer(myPeerId, {
     host: "/",
-    port: 3000,
+    // port: 3000,
     path: "/peerjs/myapp"
   });
 
@@ -366,7 +367,7 @@ if (connectToPeerId && myPeerId) {
 else {
   peer = new Peer({
     host: "/",
-    port: 3000,
+    // port: 3000,
     path: "/peerjs/myapp"
   });
 }
