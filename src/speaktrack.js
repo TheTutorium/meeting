@@ -7,6 +7,9 @@ let isMicrophoneCheckRunningCurrentUser = false; // Flag to indicate if the dete
 let currentMicrophoneStreamOtherUser = null; // Variable to hold the current audio stream
 let isMicrophoneCheckRunningOtherUser = false; // Flag to indicate if the detection is running
 
+let lastTimeCurrentUserSpoke = 0;
+let lastTimeOtherUserSpoke = 0;
+
 // Function to start tracking speech activity for a given stream
 export function startTrackingMicrophone(stream, isCurrentUser) {
     if (isCurrentUser && isMicrophoneCheckRunningCurrentUser) {
@@ -62,7 +65,7 @@ export function startTrackingMicrophone(stream, isCurrentUser) {
         const volume = sum / bufferLength;
 
         // Adjust the threshold value as per your requirement
-        const threshold = 10;
+        const threshold = 3;
 
         // Check if the volume exceeds the threshold
         const isSpeaking = volume > threshold;
@@ -74,22 +77,30 @@ export function startTrackingMicrophone(stream, isCurrentUser) {
                 isUserSpeaking = true;
                 document.getElementById('video-container2').classList.remove('video-container2NotSpeaking');
                 document.getElementById('video-container2').classList.add('video-container2Speaking');
+                lastTimeCurrentUserSpoke = Date.now();
             }
             else {
                 isOtherUserSpeaking = true;
                 document.getElementById('video-container1').classList.remove('video-container1NotSpeaking');
                 document.getElementById('video-container1').classList.add('video-container1Speaking');
+                lastTimeOtherUserSpoke = Date.now();
             }
         } else {
             if (isCurrentUser) {
                 isUserSpeaking = false;
-                document.getElementById('video-container2').classList.remove('video-container2Speaking');
-                document.getElementById('video-container2').classList.add('video-container2NotSpeaking');
+                // check if the last time current user spoke was more than 700ms ago
+                if (Date.now() - lastTimeCurrentUserSpoke > 700) {
+                    document.getElementById('video-container2').classList.remove('video-container2Speaking');
+                    document.getElementById('video-container2').classList.add('video-container2NotSpeaking');
+                }
             }
             else {
                 isOtherUserSpeaking = false;
-                document.getElementById('video-container1').classList.remove('video-container1Speaking');
-                document.getElementById('video-container1').classList.add('video-container1NotSpeaking');
+                // check if the last time other user spoke was more than 700ms ago
+                if (Date.now() - lastTimeOtherUserSpoke > 700) {
+                    document.getElementById('video-container1').classList.remove('video-container1Speaking');
+                    document.getElementById('video-container1').classList.add('video-container1NotSpeaking');
+                }
             }
         }
 
