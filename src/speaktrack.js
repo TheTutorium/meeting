@@ -62,7 +62,7 @@ export function startTrackingMicrophone(stream, isCurrentUser) {
         const volume = sum / bufferLength;
 
         // Adjust the threshold value as per your requirement
-        const threshold = 20;
+        const threshold = 10;
 
         // Check if the volume exceeds the threshold
         const isSpeaking = volume > threshold;
