@@ -29,13 +29,13 @@ body {
     object-fit: cover;
     margin: auto;
     display: block;
-    z-index: 0 !important;
 }
 
 .video-container1, .video-container2 {
     justify-content: center; /* Center horizontally */
     align-items: center;
     position: relative; /* Needed for the pseudo-element to position correctly */
+    display: flex;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     border-radius: 20px !important; /* moved border to the pseudo element */
     z-index: 1 !important;
@@ -179,3 +179,24 @@ body {
     align-items: center;
     justify-content: center;
 }
+
+.userIcon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1 !important;
+    color: #B4B4B4;
+    
+}
+
+.userIconChat {
+    font-size: 12vw !important;
+}
+.userIconWhiteboard {
+    font-size: 6vw !important;
+}
+.userIconWScreenShare {
+    font-size: 3vw !important;
+}
+
