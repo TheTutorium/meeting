@@ -10,10 +10,12 @@ let localStream;
 let isConnecting = false;
 let autoConnect = false;
 let connectInterval;
-let isOtherUserSharingScreen = false;
 
-let microphoneOn = true;
-let videoOn = true;
+let isUserStreaming = true;
+let isOtherUserStreaming = true;
+
+export let microphoneOn = true;
+export let videoOn = true;
 export let streamSenderVideo = null;
 export let streamSenderAudio = null;
 
@@ -146,6 +148,7 @@ export const toggleMicrophoneOrVideo = (microphoneToggle, videoToggle) => {
     else {
       document.getElementById('toggle-video-icon').className = 'video slash icon';
     }
+    changeIsUserStreaming(videoOn);
   }
 
   if ( microphoneToggle && !videoToggle && currentlySharing ) {
@@ -259,12 +262,23 @@ function handleData(data) {
     conn.close(); // Close the connection
     connectButton.disabled = false; // Enable the "Connect" button
     isConnecting = false;
-  } else if (data === '|share-screen-start') {
-    isOtherUserSharingScreen = true;
-  } else if (data === '|share-screen-stop') {
-    isOtherUserSharingScreen = false;
+  } else if (data === '|no-stream-from-user') {
+    isOtherUserStreaming = false;
+  } else if (data === '|stream-from-user') {
+    isOtherUserStreaming = true;
   }
 }
+
+export let changeIsUserStreaming = (isStreaming) => {
+  isUserStreaming = isStreaming;
+  if (isUserStreaming) {
+    conn.send('|stream-from-user');
+  }
+  else {
+    conn.send('|no-stream-from-user');
+  }
+}
+
 
 // Function to handle the incoming video stream from the remote peer
 function handleStream(stream) {

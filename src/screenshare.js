@@ -1,4 +1,4 @@
-import { currentCall, sendDataToPeer, streamSenderVideo, streamSenderAudio, toggleMicrophoneOrVideo } from './meeting.js';
+import { currentCall, sendDataToPeer, streamSenderVideo, streamSenderAudio, toggleMicrophoneOrVideo, videoOn, changeIsUserStreaming } from './meeting.js';
 import { screenShareClicked, chatView, currentInteractiveTool, setCurrentInteractiveTool } from './whiteboard.js';
 
 let screenStream = null; // Variable to store the screen sharing stream
@@ -14,7 +14,6 @@ let shareScreen = () => {
   navigator.mediaDevices.getDisplayMedia({ video: true })
     .then((stream) => {
 
-      sendDataToPeer("|share-screen-start");
       screenShareClicked();
       screenStream = stream;
 
@@ -31,6 +30,10 @@ let shareScreen = () => {
 
       // make screenshare button in index.html show
       document.getElementById('stopScreenShareButton').classList.remove('hidden');
+
+      if (!videoOn) {
+        changeIsUserStreaming(true);
+      }
     })
     .catch((error) => {
       console.error("Error sharing screen:", error);
@@ -52,8 +55,6 @@ window.stopScreenShare = stopScreenShare;
 
 function handleScreenShareEnded(event) {
 
-  sendDataToPeer("|share-screen-stop");
-
   // Replace the video track of the peer connection sender with the camera video track
   // Store the camera video stream
   toggleMicrophoneOrVideo(false, false);
@@ -73,6 +74,11 @@ function handleScreenShareEnded(event) {
 
   // make screenshare button in index.html hidden
   document.getElementById('stopScreenShareButton').classList.add('hidden');
+
+  // if user is not streaming video, send data to the other peer
+  if (!videoOn) {
+    changeIsUserStreaming(false);
+  }
 }
 
 window.shareScreen = shareScreen;
