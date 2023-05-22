@@ -15,9 +15,10 @@ app.get("/", (request, response) => {
 });
 
 // assigned id version
-app.get("/:id1/:id2", (request, response) => {
+app.get("/:id1/:id2/:id3", (request, response) => {
     const id1 = request.params.id1;
     const id2 = request.params.id2;
+    const id3 = request.params.id3;
   
     // Perform your desired operations or logic with id1 and id2
     // For example, you can establish a peer-to-peer connection using these IDs

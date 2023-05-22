@@ -1,4 +1,4 @@
-import { handleWhiteboardData } from "./whiteboard.js";
+import { handleWhiteboardData, history } from "./whiteboard.js";
 import { currentlySharing } from "./screenshare.js";
 import { stopTrackingMicrophone, startTrackingMicrophone } from "./speaktrack.js";
 
@@ -22,6 +22,7 @@ export let streamSenderAudio = null;
 
 let myPeerId = null;
 let connectToPeerId = null;
+let bookingId = null;
 
 // html content
 let remoteVideo = document.getElementById("remote-video");
@@ -34,14 +35,18 @@ function checkPath() {
   // Extract Peer IDs from the URL
   const pathSegments = window.location.pathname.split("/");
 
-  if (pathSegments.length === 3) {
-    const [segment1, segment2, segment3] = pathSegments;
+  if (pathSegments.length === 4) {
+    const [segment1, segment2, segment3, segment4] = pathSegments;
     // Check if the path follows the format "tutoryum.com/{id1}/{id2}"
     const isValidPath = /^[a-zA-Z0-9_-]+$/.test(segment2) && /^[a-zA-Z0-9_-]+$/.test(segment3);
 
     if (isValidPath && segment1 === "") {
       myPeerId = segment2;
       connectToPeerId = segment3;
+      bookingId = segment4;
+      console.log("myPeerId: " + myPeerId);
+      console.log("connectToPeerId: " + connectToPeerId);
+      console.log("bookingId: " + bookingId);
     }
   }
 }
@@ -128,6 +133,26 @@ function handleDisconnect() {
 
   if (autoConnect) {
     handleConnect();
+  }
+  else {
+    // Make a POST request and send the "history" data
+    fetch('backend.tutoryum.com/whiteboards/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ booking_id: bookingId, content: history }),
+    })
+      .then(response => {
+        if (response.ok) {
+          console.log('History data sent successfully.');
+        } else {
+          console.error('Failed to send history data.');
+        }
+      })
+      .catch(error => {
+        console.error('Error occurred while sending history data:', error);
+      });
   }
 }
 
@@ -329,6 +354,7 @@ checkPath();
 if (connectToPeerId && myPeerId) {
   peer = new Peer(myPeerId, {
     host: "/",
+    port: 3000,
     path: "/peerjs/myapp"
   });
 
@@ -340,6 +366,7 @@ if (connectToPeerId && myPeerId) {
 else {
   peer = new Peer({
     host: "/",
+    port: 3000,
     path: "/peerjs/myapp"
   });
 }
