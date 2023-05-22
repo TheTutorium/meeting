@@ -75,15 +75,19 @@ export function startTrackingMicrophone(stream, isCurrentUser) {
             // User is speaking
             if (isCurrentUser) {
                 isUserSpeaking = true;
-                document.getElementById('video-container2').classList.remove('video-container2NotSpeaking');
-                document.getElementById('video-container2').classList.add('video-container2Speaking');
-                lastTimeCurrentUserSpoke = Date.now();
+                if (isMicrophoneCheckRunningCurrentUser) {
+                    document.getElementById('video-container2').classList.remove('video-container2NotSpeaking');
+                    document.getElementById('video-container2').classList.add('video-container2Speaking');
+                    lastTimeCurrentUserSpoke = Date.now();
+                }
             }
             else {
                 isOtherUserSpeaking = true;
-                document.getElementById('video-container1').classList.remove('video-container1NotSpeaking');
-                document.getElementById('video-container1').classList.add('video-container1Speaking');
-                lastTimeOtherUserSpoke = Date.now();
+                if (isMicrophoneCheckRunningOtherUser) {
+                    document.getElementById('video-container1').classList.remove('video-container1NotSpeaking');
+                    document.getElementById('video-container1').classList.add('video-container1Speaking');
+                    lastTimeOtherUserSpoke = Date.now();
+                }
             }
         } else {
             if (isCurrentUser) {
@@ -125,10 +129,17 @@ export function stopTrackingMicrophone(isCurrentUser) {
     if (isCurrentUser) {
         currentMicrophoneStreamCurrentUser = null;
         isMicrophoneCheckRunningCurrentUser = false;
+        lastTimeCurrentUserSpoke -= 1000;
+        document.getElementById('video-container2').classList.remove('video-container2Speaking');
+        document.getElementById('video-container2').classList.add('video-container2NotSpeaking');
+        console.log("iki tane biscuit ferevla");
     }
     else {
         currentMicrophoneStreamOtherUser = null;
         isMicrophoneCheckRunningOtherUser = false;
+        lastTimeOtherUserSpoke -= 1000;
+        document.getElementById('video-container1').classList.remove('video-container1Speaking');
+        document.getElementById('video-container1').classList.add('video-container1NotSpeaking');
     }
 }
 
