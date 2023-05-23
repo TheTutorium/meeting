@@ -133,7 +133,7 @@ function handleDisconnect() {
   }
   else {
     // Make a POST request and send the "history" data
-    fetch('http://backend.tutoryum.com/whiteboards/', {
+    fetch('https://backend.tutoryum.com/whiteboards/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
