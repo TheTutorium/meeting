@@ -44,9 +44,6 @@ function checkPath() {
       myPeerId = segment2;
       connectToPeerId = segment3;
       bookingId = segment4;
-      console.log("myPeerId: " + myPeerId);
-      console.log("connectToPeerId: " + connectToPeerId);
-      console.log("bookingId: " + bookingId);
     }
   }
 }
@@ -136,7 +133,7 @@ function handleDisconnect() {
   }
   else {
     // Make a POST request and send the "history" data
-    fetch('backend.tutoryum.com/whiteboards/', {
+    fetch('http://backend.tutoryum.com/whiteboards/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -153,7 +150,7 @@ function handleDisconnect() {
       .catch(error => {
         console.error('Error occurred while sending history data:', error);
       });
-      window.location.href = 'https://www.tutoryum.com/'
+      // window.location.href = 'https://www.tutoryum.com/'
   }
 }
 

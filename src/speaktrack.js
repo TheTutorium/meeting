@@ -132,7 +132,6 @@ export function stopTrackingMicrophone(isCurrentUser) {
         lastTimeCurrentUserSpoke -= 1000;
         document.getElementById('video-container2').classList.remove('video-container2Speaking');
         document.getElementById('video-container2').classList.add('video-container2NotSpeaking');
-        console.log("iki tane biscuit ferevla");
     }
     else {
         currentMicrophoneStreamOtherUser = null;
