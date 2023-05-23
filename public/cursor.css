@@ -1,5 +1,5 @@
 .pen-cursor {
-    cursor: url("/public/cursors/pencil.svg"), auto !important;
+    cursor: url("/public/cursors/pencil.svg") 5 5, auto !important;
 }
 
 .eraser-cursor {
